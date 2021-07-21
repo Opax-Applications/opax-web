@@ -101,7 +101,7 @@ class AuditList extends Component {
     }
     return (
       <>
-        <h1>Accessibility Audits</h1>
+        <h1>Opax Monitor</h1>
         <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
           {this.state.error}
