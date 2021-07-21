@@ -1,0 +1,59 @@
+version: '3.5'
+
+services:
+
+  accessibility_audit:
+    build:
+      context: .
+      args:
+        NODE_USER_UID: ${NODE_USER_UID-1000}
+        NODE_USER_GID: ${NODE_USER_GID-1000}
+    container_name: accessibility_audit
+    environment:
+      DB_URL: mongodb://mongodb:27017/accessibility_audit
+      TZ: America/Detroit
+      CHOKIDAR_USEPOLLING: 'true'
+      NODE_TLS_REJECT_UNAUTHORIZED: '0'
+      NODE_OPTIONS: '--http-parser=legacy --insecure-http-parser'
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      NODE_ENV: ${MODE-production}
+      SAML_ENTRYPOINT: ${SAML_ENTRYPOINT-}
+      SAML_ISSUER: ${SAML_ISSUER-}
+      SAML_CERT_FILENAME: ${SAML_CERT_FILENAME-}
+      SAML_PRIVATE_CERT_FILENAME: ${SAML_PRIVATE_CERT_FILENAME-}
+      DEVELOPMENT_PORT: ${DEVELOPMENT_PORT-3142}
+      PRODUCTION_PORT: ${PRODUCTION_PORT-80}
+      REACT_APP_NODE_ENV: ${MODE-production}
+      REACT_APP_DEVELOPMENT_API_PORT: ${DEVELOPMENT_API_PORT-3143}
+      REACT_APP_PRODUCTION_PORT: ${PRODUCTION_PORT-80}
+    volumes:
+      - ./backend/src:/app/backend/src:Z
+      - ./backend/.eslintrc.json:/app/backend/.eslintrc.json:Z
+      - ./client/public:/app/client/public:Z
+      - ./client/src:/app/client/src:Z
+      - ./client/.env:/app/client/.env:Z
+      - ./client/.eslintrc.json:/app/client/.eslintrc.json:Z
+      - ./certs:/app/certs:Z
+      - /dev/shm:/dev/shm
+    depends_on:
+      - mongodb
+    ports:
+      - "${RESTRICTED_IP-127.0.0.1}:${DEVELOPMENT_PORT-3142}:3142"
+      - "${RESTRICTED_IP-127.0.0.1}:${DEVELOPMENT_API_PORT-3143}:3143"
+      - "${RESTRICTED_IP-0.0.0.0}:${PRODUCTION_PORT-80}:8080"
+      - "${RESTRICTED_IP-0.0.0.0}:443:8443"
+    restart: unless-stopped
+
+  mongodb:
+    image: mongo:4.1
+    environment:
+      TZ: America/Detroit
+      LANG: C.UTF-8
+    volumes:
+      - vol_accessibility_audit_db:/data/db
+      - vol_accessibility_audit_configdb:/data/configdb
+    restart: unless-stopped
+
+volumes:
+  vol_accessibility_audit_db:
+  vol_accessibility_audit_configdb:
