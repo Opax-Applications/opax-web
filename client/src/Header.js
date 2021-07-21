@@ -7,10 +7,9 @@ const Header = () => {
   return (
     <header>
       <p className="bannerTitle">
-        <a href="https://github.com/MSU-NatSci/DomainAccessibilityAudit">
-          Domain Accessibility Audit
-        </a>&nbsp;
-        <FontAwesomeIcon icon={faUniversalAccess} color="#3e50b4" size="lg"/>
+        <a href="/">
+          Opax Monitor
+        </a>
       </p>
     </header>
   );

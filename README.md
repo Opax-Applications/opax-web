@@ -1,4 +1,4 @@
-# Domain Accessibility Audit
+# Opax Monitor
 
 This web application automatically crawls websites and checks for accessibility violations.
 It can crawl within subdomains of the initial domain it starts with.

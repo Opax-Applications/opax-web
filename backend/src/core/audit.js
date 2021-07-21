@@ -181,7 +181,7 @@ export default class Audit {
     this.aXeB = AxeBuilder(this.driver)
       .options({
         branding: {
-          application: "Domain Accessibility Audit"
+          application: "Opax Monitor"
         },
         resultTypes: ["violations"],
       })
