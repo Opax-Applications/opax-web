@@ -31,7 +31,7 @@ class AuditList extends Component {
   
   async componentDidMount() {
     await this.getAudits();
-    document.title = "Accessibility Audits";
+    document.title = "Opax Monitor";
   }
   
   componentDidUpdate(prevProps, prevState) {
