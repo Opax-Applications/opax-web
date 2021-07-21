@@ -8,7 +8,7 @@ const Header = () => {
     <header>
       <p className="bannerTitle">
         <a href="/">
-          Opax Monitor test
+          Opax Monitor
         </a>
       </p>
     </header>
