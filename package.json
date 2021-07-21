@@ -1,10 +1,10 @@
 {
-  "name": "domain-accessibility-audit",
+  "name": "opax-web",
   "version": "0.2.0",
   "description": "Scan a domain and subdomains for accessibility violations and report them with a web interface.",
   "repository": {
     "type": "git",
-    "url": "git://github.com/MSU-NatSci/DomainAccessibilityAudit.git"
+    "url": "git://github.com/Opax-Applications/opax-web.git"
   },
   "scripts": {
     "start:server:dev": "cd backend && npm run start:dev",
