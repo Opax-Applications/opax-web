@@ -4,7 +4,7 @@ import { LinkContainer } from 'react-router-bootstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-import { Box, Flex, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import { Box, Flex, useColorModeValue, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
 import {
   Table,
   Thead,
@@ -116,72 +116,77 @@ class AuditStatus extends React.Component {
 
             <Box w="100%" mb="4">
               <Text fontSize="5xl" mb="5">{this.state.status && this.state.status.initialDomainName ?
-                this.state.status.initialDomainName : 'Audit Status'}</Text>
+                'Audit status for ' + this.state.status.initialDomainName : 'Loading...'}</Text>
               <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
                 {this.state.error}
               </Alert>
-              {this.state.status && this.state.status.running &&
-            <Button mt="5" colorScheme="pink"
+             
+              {this.state.status && this.state.status.running !== undefined &&
+        
+          <section>
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 5, lg: 8 }}>
+
+              <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>
+                <StatLabel>Audit State</StatLabel>
+                <StatNumber>{this.state.status.running ? "Running" : "Stopped"}</StatNumber>
+                <StatHelpText>
+                  {this.state.status.nbScanErrors} scan errors
+                </StatHelpText>
+              </Stat>
+              <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>
+                <StatLabel>Checked URLs</StatLabel>
+                <StatNumber>{this.state.status.nbCheckedURLs}</StatNumber>
+                <StatHelpText>
+                  {this.state.status.nbURLsToCheck} remaining
+                </StatHelpText>
+              </Stat>
+
+              <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>
+                <StatLabel>Violations</StatLabel>
+                <StatNumber>{this.state.status.nbViolations}</StatNumber>
+                <StatHelpText>
+                  
+                </StatHelpText>
+              </Stat>
+            </SimpleGrid>
+          </section>
+              }
+              <Box w="100%" mt="5">
+
+               
+                {this.state.status && this.state.status.running &&
+            <>
+              <LinkContainer to={'/audits/'+this.props.match.params.auditId}>
+
+                <Button colorScheme="pink"
+          size="lg">View audit results</Button>
+              </LinkContainer>
+
+              <Button colorScheme="pink"
           size="lg"
                 onClick={e => this.stopAudit()}
                 disabled={!this.state.running || this.state.requestedStop}>
               Stop the audit
-            </Button>
-              }
-              {this.state.status && this.state.status.running !== undefined &&
-        
-          <section>
-            <StatGroup>
-              <Stat>
-                <StatLabel>Checked URLs</StatLabel>
-                <StatNumber>{this.state.status.nbCheckedURLs}</StatNumber>
-                <StatHelpText>
-                  {this.state.status.running ? <StatArrow type="increase" /> : "No"}
-
-                </StatHelpText>
-              </Stat>
-
-              <Stat>
-                <StatLabel>Violations</StatLabel>
-                <StatNumber>{this.state.status.nbViolations}</StatNumber>
-                <StatHelpText>
-                  <StatArrow type="decrease" />
-      9.05%
-                </StatHelpText>
-              </Stat>
-            </StatGroup>
-            <h2>Status</h2>
-            <Table bordered size="sm" className="data">
-              <tbody>
-                <tr>
-                  <th>Running</th>
-                  <td>{this.state.status.running ? "Yes" : "No"}</td>
-                </tr>
-                <tr>
-                  <th>Checked URLs</th>
-                  <td>{this.state.status.nbCheckedURLs}</td>
-                </tr>
-                <tr>
-                  <th>URLs to check</th>
-                  <td>{this.state.status.nbURLsToCheck} (more might be added later)</td>
-                </tr>
-                <tr>
-                  <th>Violations found</th>
-                  <td>{this.state.status.nbViolations}</td>
-                </tr>
-                <tr>
-                  <th>Scan errors</th>
-                  <td>{this.state.status.nbScanErrors}</td>
-                </tr>
-              </tbody>
-            </Table>
-          </section>
-              }
-              <section>
-                <h2>Results</h2>
-                <Link to={'/audits/'+this.props.match.params.auditId}>Audit results</Link>
-              </section>
+              </Button>
+            </>
+                }
+              </Box>
             </Box>
           </Flex>
         </Flex>

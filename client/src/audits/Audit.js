@@ -117,34 +117,51 @@ class Audit extends Component {
             <>
               <Alert>
 The audit is still running. <Link to={'/audits/' + this.props.match.params.auditId + '/status'}>See status page</Link>.  </Alert>
-</>
+            </>
             }
             <Text fontSize="5xl" mb="5">Audit Details</Text>
+            <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 5, lg: 8 }}>
 
-            <StatGroup mb="5">
-
-              <Stat>
+              {/* <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>
                 <StatLabel>Root URL</StatLabel>
                 <StatNumber>{this.state.audit.firstURL}</StatNumber>
-              </Stat>
+              </Stat> */}
 
 
-              <Stat>
-                <StatLabel>Standard</StatLabel>
-                <StatNumber>{standardTitles[this.state.audit.standard]}</StatNumber>
-              </Stat>
-
-              <Stat>
-                <StatLabel>Pages audited</StatLabel>
+              <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>                <StatLabel>Pages audited</StatLabel>
                 <StatNumber>{this.state.audit.nbCheckedURLs}</StatNumber>
               </Stat>
 
-              <Stat>
-                <StatLabel>Issues found</StatLabel>
+              <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>                <StatLabel>Issues found</StatLabel>
                 <StatNumber>{this.state.audit.nbViolations}</StatNumber>
               </Stat>
-            </StatGroup>
 
+
+              <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>                <StatLabel>Standard</StatLabel>
+                <StatNumber>{standardTitles[this.state.audit.standard]}</StatNumber>
+              </Stat>
+
+            </SimpleGrid>
 
             {/* <Table colorScheme="whiteAlpha" variant="simple">
               <Tbody>

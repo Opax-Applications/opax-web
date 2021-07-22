@@ -142,7 +142,7 @@ class AuditForm extends React.Component {
               </Alert>
               <Box w="50%" mb="4">
 
-                <Form onSubmit={e => { e.preventDefault(); this.startAudit(); } } className="form mt-3">
+                <Form onSubmit={e => { e.preventDefault(); this.startAudit(); } }>
                   <Stack spacing={5}>
 
                     <FormControl id="firstURL">
@@ -198,7 +198,7 @@ class AuditForm extends React.Component {
                       <Input name="postLoadingDelay" type="number" value={this.state.postLoadingDelay}
                 onChange={e => this.handleChange(e)}/>
                     </FormControl>
-                    <Button mt="5"colorScheme="pink"
+                    <Button mt="5" colorScheme="pink"
           size="lg" type="submit">
               Start Audit
                     </Button>
