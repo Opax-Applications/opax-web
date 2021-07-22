@@ -1,10 +1,42 @@
 import React, { Component } from 'react';
 import Alert from 'react-bootstrap/Alert';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import Table from 'react-bootstrap/Table';
 import PropTypes from 'prop-types';
 import { LinkContainer } from 'react-router-bootstrap';
-
+import { Box, Flex, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import ServerAPI from '../ServerAPI';
 import Categories from './Categories';
 import PageTable from './PageTable';
@@ -40,7 +72,11 @@ class Domain extends Component {
     return (
       <>
         <div className="container">
-          <Breadcrumb>
+          <Flex direction="column" h="100vh">
+            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+
+              <Box w="100%" mb="4">
+                {/* <Breadcrumb>
             <LinkContainer to="/audits/">
               <Breadcrumb.Item>Audits</Breadcrumb.Item>
             </LinkContainer>
@@ -52,22 +88,50 @@ class Domain extends Component {
               <Breadcrumb.Item active>Domain</Breadcrumb.Item>
             </>
             }
-          </Breadcrumb>
-          <Alert show={this.state.error != null} variant="danger" dismissible
+          </Breadcrumb> */}
+                <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-            {this.state.error}
-          </Alert>
-          <h1>{this.state.domain ? <span className="code">{this.state.domain.name}</span> : ''}</h1>
-          {this.state.domain &&
+                  {this.state.error}
+                </Alert>
+                <Text fontSize="5xl" mb="4">{this.state.domain ? this.state.domain.name : ''}</Text>
+                {this.state.domain &&
           <>
             <section>
-              <h2>Statistics</h2>
-              <Table bordered size="sm" className="data">
-                <tbody>
-                  <tr><th>Number of checked URLs</th><td>{this.state.domain.nbCheckedURLs}</td></tr>
-                  <tr><th>Number of accessibility violations</th><td>{this.state.domain.nbViolations}</td></tr>
-                </tbody>
-              </Table>
+              <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 5, lg: 8 }}>
+
+                {/* <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>
+                <StatLabel>Root URL</StatLabel>
+                <StatNumber>{this.state.audit.firstURL}</StatNumber>
+              </Stat> */}
+
+
+                <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>                <StatLabel>Pages audited</StatLabel>
+                  <StatNumber>{this.state.domain.nbCheckedURLs}</StatNumber>
+                </Stat>
+
+                <Stat shadow={'xl'}
+              px={{ base: 2, md: 4 }}
+              background={'#1F2029'}
+      py={'5'}
+      border={'1px solid #222'}
+      rounded={'lg'}>                <StatLabel>Issues found</StatLabel>
+                  <StatNumber>{this.state.domain.nbViolations}</StatNumber>
+                </Stat>
+
+
+           
+              </SimpleGrid>
+             
             </section>
             { this.state.domain.categories &&
               <Categories categories={this.state.domain.categories}/>
@@ -76,7 +140,10 @@ class Domain extends Component {
               items={this.state.domain.pages} itemType="page"/>
             <PageTable domain={this.state.domain}/>
           </>
-          }
+                }
+              </Box>
+            </Flex>
+          </Flex>
         </div>
       </>
     );

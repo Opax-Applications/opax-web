@@ -1,20 +1,8 @@
 import React, { Component } from 'react';
 import Alert from 'react-bootstrap/Alert';
 // import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import Button from 'react-bootstrap/Button';
 // import Table from 'react-bootstrap/Table';
-import { LinkContainer } from 'react-router-bootstrap';
-import PropTypes from 'prop-types';
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbSeparator,
-} from "@chakra-ui/react";
-
-import { Box, Flex, SimpleGrid, Text, theme } from '@chakra-ui/react';
+import { Box, Flex, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
 import {
   Table,
   Thead,
@@ -25,6 +13,13 @@ import {
   Td,
   TableCaption,
 } from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
 import {
   Stat,
   StatLabel,
@@ -33,6 +28,19 @@ import {
   StatArrow,
   StatGroup,
 } from '@chakra-ui/react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
+import { LinkContainer } from 'react-router-bootstrap';
+import PropTypes from 'prop-types';
+import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import ServerAPI from '../ServerAPI';
 
@@ -72,11 +80,15 @@ class Page extends Component {
     return (
       <>
         <div className="container">
-          <Breadcrumb>
-            <BreadcrumbItem>
-              <BreadcrumbLink href="/">Audits</BreadcrumbLink>
-            </BreadcrumbItem>
-            {this.state.page &&
+          <Flex direction="column" h="100vh">
+            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+
+              <Box w="100%" mb="4">
+                <Breadcrumb>
+                  <BreadcrumbItem>
+                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  {this.state.page &&
             <>
               <BreadcrumbItem>
                 <BreadcrumbLink href={'/audits/'+this.state.page.auditId}>Audit</BreadcrumbLink>
@@ -86,19 +98,22 @@ class Page extends Component {
               </BreadcrumbItem>
               <BreadcrumbItem>Page</BreadcrumbItem>
             </>
-            }
-          </Breadcrumb>
-          <h1>
-            {this.state.page ? <span className="code">{this.state.page.url}</span> : ''}
-          </h1>
-          <Alert show={this.state.error != null} variant="danger" dismissible
+                  }
+                </Breadcrumb>
+
+                              <Text fontSize="5xl" mb="4">{this.state.page ? <span className="code">{this.state.page.url}</span> : ''}</Text>
+                <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-            {this.state.error}
-          </Alert>
-          {this.state.page &&
+                  {this.state.error}
+                </Alert>
+                {this.state.page &&
           <>
             <p className="text-center"><a href={this.state.page.url} target="_blank"
-              rel="noopener noreferrer">Visit the page</a></p>
+              rel="noopener noreferrer"> <Button colorScheme="pink"
+          size="lg" mb="5"
+             >
+              Visit page
+              </Button></a></p>
             {this.state.page.status && this.state.page.status !== '200' &&
               <Alert variant="danger">Page status: {this.state.page.status}</Alert>
             }
@@ -106,14 +121,14 @@ class Page extends Component {
               <Alert variant="danger">Page error: {this.state.page.errorMessage}</Alert>
             }
             {this.state.page.violations.length === 0 &&
-              <Alert variant="success">No violation</Alert>
+               <Text fontSize="lg" mt="5" mb="4">No violations detected</Text>
             }
             {this.state.page.violations
               .sort((v1, v2) => impacts.get(v2.impact) - impacts.get(v1.impact))
               .map(violation => (
-                <Table bordered size="sm" key={violation.id} className="data">
+            <Table mt="5" colorScheme="whiteAlpha">
                   <Tbody>
-                    {/*<tr><th>Id</th><td className="code">{violation.id}</td></tr>*/}
+                    {/* <tr><th>Id</th><td className="code">{violation.id}</td></tr> */}
                     <Tr><Th>Description</Th><Td>
                       {violation.description + ' '}
                       <Button variant="info" size="xs" title="Open rule description on Deque's website"
@@ -143,7 +158,10 @@ class Page extends Component {
               ))
             }
           </>
-          }
+                }
+              </Box>
+            </Flex>
+          </Flex>
         </div>
       </>
     );
