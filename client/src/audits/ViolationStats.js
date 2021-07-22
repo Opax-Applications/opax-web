@@ -1,11 +1,43 @@
 import React, { Component } from 'react';
-import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 import { faInfoCircle, faPlusSquare, faMinusSquare } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
+import { Box, Flex, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import './ViolationStats.css';
 
 
@@ -65,8 +97,8 @@ class ViolationStats extends Component {
       v[this.itemPlural].length > 0;
     const expanded = this.state.seeItemsViolationId === id;
     return (
-      <tr key={id}>
-        <td className="code">
+      <Tr key={id}>
+        <Td className="code">
           {v.description}
           {withItems &&
             <>
@@ -83,10 +115,10 @@ class ViolationStats extends Component {
             <FontAwesomeIcon icon={faInfoCircle}/>
           </Button>
           {withItems && this.violationItems(id)}
-        </td>
-        <td className={v.impact}>{v.impact}</td>
-        <td className="text-right">{v.total}</td>
-      </tr>
+        </Td>
+        <Td className={v.impact}>{v.impact}</Td>
+        <Td className="text-right">{v.total}</Td>
+      </Tr>
     );
   }
   
@@ -101,18 +133,18 @@ class ViolationStats extends Component {
     ]);
     return (
       <section>
-        <h2>Violations</h2>
-        <Table bordered size="sm" className="data">
-          <thead>
-            <tr>
-              <th>description</th>
-              <th>impact</th>
-              <th className="text-right">total</th>
-            </tr>
-          </thead>
-          <tbody>
+        <Text fontSize="3xl" mt="5"mb="5">Issues</Text>
+        <Table colorScheme="whiteAlpha" variant="simple">
+          <Thead>
+            <Tr>
+              <Th>description</Th>
+              <Th>impact</Th>
+              <Th>total</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
             {Object.keys(stats).length === 0 ?
-              <tr><td colSpan="3" className="text-center">None</td></tr> :
+              <Tr><Td colSpan="3">None</Td></Tr> :
               <>
                 {Object.keys(stats)
                   .sort((id1,id2) => {
@@ -126,7 +158,7 @@ class ViolationStats extends Component {
                 }
               </>
             }
-          </tbody>
+          </Tbody>
         </Table>
       </section>
     );

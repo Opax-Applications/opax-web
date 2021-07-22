@@ -184,8 +184,8 @@ class AuditList extends Component {
           localLogin={(u,p) => this.localLogin(u,p)} logout={() => this.logout()}/>
               </HStack>
               {auditsHTML &&
-          <section>
-            <Text fontSize="lg" mb="4">Saved Audits</Text>
+          <Box mt="4">
+            <Text fontSize="xl" mb="4">Saved Audits</Text>
 
             <Table colorScheme="whiteAlpha" variant="simple">
               <Thead>
@@ -202,7 +202,7 @@ class AuditList extends Component {
                 {auditsHTML}
               </Tbody>
             </Table>
-          </section>
+          </Box>
               }
             </Box>
           </Flex>

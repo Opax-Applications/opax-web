@@ -1,11 +1,45 @@
 import React from 'react';
 import Alert from 'react-bootstrap/Alert';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
 import { LinkContainer } from 'react-router-bootstrap';
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
+import { Box, Flex, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
+
 
 import ServerAPI from '../ServerAPI';
 
@@ -77,29 +111,46 @@ class AuditStatus extends React.Component {
   render() {
     return (
       <>
-        <Breadcrumb>
-          <LinkContainer to="/audits/">
-            <Breadcrumb.Item>Audits</Breadcrumb.Item>
-          </LinkContainer>
-          <Breadcrumb.Item active>Audit Status</Breadcrumb.Item>
-        </Breadcrumb>
-        <h1>{this.state.status && this.state.status.initialDomainName ?
-          this.state.status.initialDomainName : 'Audit Status'}</h1>
-        <Alert show={this.state.error != null} variant="danger" dismissible
+        <Flex direction="column" h="100vh">
+          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+
+            <Box w="100%" mb="4">
+              <Text fontSize="5xl" mb="5">{this.state.status && this.state.status.initialDomainName ?
+                this.state.status.initialDomainName : 'Audit Status'}</Text>
+              <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-          {this.state.error}
-        </Alert>
-        {this.state.status && this.state.status.running &&
-          <p className="m-5">
-            <Button variant="danger" size="sm"
+                {this.state.error}
+              </Alert>
+              {this.state.status && this.state.status.running &&
+            <Button mt="5" colorScheme="pink"
+          size="lg"
                 onClick={e => this.stopAudit()}
                 disabled={!this.state.running || this.state.requestedStop}>
               Stop the audit
             </Button>
-          </p>
-        }
-        {this.state.status && this.state.status.running !== undefined &&
+              }
+              {this.state.status && this.state.status.running !== undefined &&
+        
           <section>
+            <StatGroup>
+              <Stat>
+                <StatLabel>Checked URLs</StatLabel>
+                <StatNumber>{this.state.status.nbCheckedURLs}</StatNumber>
+                <StatHelpText>
+                  {this.state.status.running ? <StatArrow type="increase" /> : "No"}
+
+                </StatHelpText>
+              </Stat>
+
+              <Stat>
+                <StatLabel>Violations</StatLabel>
+                <StatNumber>{this.state.status.nbViolations}</StatNumber>
+                <StatHelpText>
+                  <StatArrow type="decrease" />
+      9.05%
+                </StatHelpText>
+              </Stat>
+            </StatGroup>
             <h2>Status</h2>
             <Table bordered size="sm" className="data">
               <tbody>
@@ -126,11 +177,14 @@ class AuditStatus extends React.Component {
               </tbody>
             </Table>
           </section>
-        }
-        <section>
-          <h2>Results</h2>
-          <Link to={'/audits/'+this.props.match.params.auditId}>Audit results</Link>
-        </section>
+              }
+              <section>
+                <h2>Results</h2>
+                <Link to={'/audits/'+this.props.match.params.auditId}>Audit results</Link>
+              </section>
+            </Box>
+          </Flex>
+        </Flex>
       </>
     );
   }

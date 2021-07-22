@@ -1,11 +1,42 @@
 import React, { Component } from 'react';
-import Alert from 'react-bootstrap/Alert';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import Table from 'react-bootstrap/Table';
 import { Link } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import PropTypes from 'prop-types';
-
+import { Box, Alert, Flex, Tag, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import ServerAPI from '../ServerAPI';
 import Categories from './Categories';
 import DomainTable from './DomainTable';
@@ -63,93 +94,123 @@ class Audit extends Component {
     };
     return (
       <>
-        <div className="container">
-          <Breadcrumb>
+        <Flex direction="column" h="100vh">
+          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+
+            <Box w="100%" mb="4">
+              {/* <Breadcrumb>
             <LinkContainer to="/audits/">
               <Breadcrumb.Item>Audits</Breadcrumb.Item>
             </LinkContainer>
             <Breadcrumb.Item active>Audit</Breadcrumb.Item>
-          </Breadcrumb>
-          <Alert show={this.state.error != null} variant="danger" dismissible
+          </Breadcrumb> */}
+              <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-            {this.state.error}
-          </Alert>
-          <h1>{this.state.audit ?
-            <span className="code">{this.state.audit.initialDomainName}</span>
-            : ''}</h1>
-          {this.state.audit &&
+                {this.state.error}
+              </Alert>
+              <h1>{this.state.audit ?
+                <span className="code">{this.state.audit.initialDomainName}</span>
+                : ''}</h1>
+              {this.state.audit &&
           <>
             {this.state.statusLink &&
-              <p>The audit is still running. <Link to={'/audits/' + this.props.match.params.auditId + '/status'}>See status page</Link>.</p>
+            <>
+              <Alert>
+The audit is still running. <Link to={'/audits/' + this.props.match.params.auditId + '/status'}>See status page</Link>.  </Alert>
+</>
             }
-            <section>
-              <h2>Audit Parameters</h2>
-              <Table bordered size="sm" className="data">
-                <tbody>
-                  <tr>
-                    <th>First URL</th>
-                    <td className="code">{this.state.audit.firstURL}</td>
-                  </tr>
-                  <tr>
-                    <th>Standard</th>
-                    <td>{standardTitles[this.state.audit.standard]}</td>
-                  </tr>
-                  <tr>
-                    <th>Check subdomains</th>
-                    <td className="code">{this.state.audit.checkSubdomains ? "Yes" : "No"}</td>
-                  </tr>
-                  <tr>
-                    <th>Maximum depth</th>
-                    <td>{this.state.audit.maxDepth}</td>
-                  </tr>
-                  <tr>
-                    <th>Maximum number of pages checked per domain</th>
-                    <td>{this.state.audit.maxPagesPerDomain}</td>
-                  </tr>
-                  <tr>
-                    <th>Use site maps</th>
-                    <td className="code">{this.state.audit.sitemaps ? "Yes" : "No"}</td>
-                  </tr>
-                  <tr>
-                    <th>Include only paths matching the regular expression</th>
-                    <td className="code">{this.state.audit.includeMatch}</td>
-                  </tr>
-                  <tr>
-                    <th>Web browser</th>
-                    <td>{this.state.audit.browser}</td>
-                  </tr>
-                  <tr>
-                    <th>Additional delay to let dynamic pages load (ms)</th>
-                    <td>{this.state.audit.postLoadingDelay}</td>
-                  </tr>
-                  <tr>
-                    <th>Date started</th>
-                    <td>{(new Date(this.state.audit.dateStarted)).toLocaleString()}</td>
-                  </tr>
-                  <tr>
-                    <th>Date ended</th>
-                    <td>{this.state.audit.dateEnded &&
-                      (new Date(this.state.audit.dateEnded)).toLocaleString()}</td>
-                  </tr>
-                  <tr>
-                    <th>Audit completed</th>
-                    <td>{this.state.audit.complete ? "Yes" : "No"}</td>
-                  </tr>
-                  <tr>
-                    <th>Number of checked URLs</th>
-                    <td>{this.state.audit.nbCheckedURLs}</td>
-                  </tr>
-                  <tr>
-                    <th>Number of accessibility violations</th>
-                    <td>{this.state.audit.nbViolations}</td>
-                  </tr>
-                  <tr>
-                    <th>Number of scan errors</th>
-                    <td>{this.state.audit.nbScanErrors}</td>
-                  </tr>
-                </tbody>
-              </Table>
-            </section>
+            <Text fontSize="5xl" mb="5">Audit Details</Text>
+
+            <StatGroup mb="5">
+
+              <Stat>
+                <StatLabel>Root URL</StatLabel>
+                <StatNumber>{this.state.audit.firstURL}</StatNumber>
+              </Stat>
+
+
+              <Stat>
+                <StatLabel>Standard</StatLabel>
+                <StatNumber>{standardTitles[this.state.audit.standard]}</StatNumber>
+              </Stat>
+
+              <Stat>
+                <StatLabel>Pages audited</StatLabel>
+                <StatNumber>{this.state.audit.nbCheckedURLs}</StatNumber>
+              </Stat>
+
+              <Stat>
+                <StatLabel>Issues found</StatLabel>
+                <StatNumber>{this.state.audit.nbViolations}</StatNumber>
+              </Stat>
+            </StatGroup>
+
+
+            {/* <Table colorScheme="whiteAlpha" variant="simple">
+              <Tbody>
+                <Tr>
+                  <Th>First URL</Th>
+                  <Td className="code">{this.state.audit.firstURL}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Standard</Th>
+                  <Td>{standardTitles[this.state.audit.standard]}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Check subdomains</Th>
+                  <Td className="code">{this.state.audit.checkSubdomains ? "Yes" : "No"}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Maximum depth</Th>
+                  <Td>{this.state.audit.maxDepth}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Maximum number of pages checked per domain</Th>
+                  <Td>{this.state.audit.maxPagesPerDomain}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Use site maps</Th>
+                  <Td className="code">{this.state.audit.sitemaps ? "Yes" : "No"}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Include only paths matching the regular expression</Th>
+                  <Td className="code">{this.state.audit.includeMatch}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Web browser</Th>
+                  <Td>{this.state.audit.browser}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Additional delay to let dynamic pages load (ms)</Th>
+                  <Td>{this.state.audit.postLoadingDelay}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Date started</Th>
+                  <Td>{(new Date(this.state.audit.dateStarted)).toLocaleString()}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Date ended</Th>
+                  <Td>{this.state.audit.dateEnded &&
+                      (new Date(this.state.audit.dateEnded)).toLocaleString()}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Audit completed</Th>
+                  <Td>{this.state.audit.complete ? "Yes" : "No"}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Number of checked URLs</Th>
+                  <Td>{this.state.audit.nbCheckedURLs}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Number of accessibility violations</Th>
+                  <Td>{this.state.audit.nbViolations}</Td>
+                </Tr>
+                <Tr>
+                  <Th>Number of scan errors</Th>
+                  <Td>{this.state.audit.nbScanErrors}</Td>
+                </Tr>
+              </Tbody>
+            </Table> */}
             { this.state.audit.categories &&
               <Categories categories={this.state.audit.categories}/>
             }
@@ -167,8 +228,10 @@ class Audit extends Component {
               </>
             }
           </>
-          }
-        </div>
+              }
+            </Box>
+          </Flex>
+        </Flex>
       </>
     );
   }

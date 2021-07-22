@@ -1,8 +1,42 @@
 import React from 'react';
-
+import { Box, Flex, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import Alert from 'react-bootstrap/Alert';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import Button from 'react-bootstrap/Button';
+// import Breadcrumb from 'react-bootstrap/Breadcrumb';
+// import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -82,98 +116,98 @@ class AuditForm extends React.Component {
       return <p>You are not allowed to create new audits.</p>;
     return (
       <>
-        <h1>Start A New Audit</h1>
-        <Breadcrumb>
-          <LinkContainer to="/audits/">
-            <Breadcrumb.Item>Audits</Breadcrumb.Item>
-          </LinkContainer>
-          <Breadcrumb.Item active>Start A New Audit</Breadcrumb.Item>
-        </Breadcrumb>
-        <Alert show={this.state.error != null} variant="danger" dismissible
+        <Flex direction="column" h="100vh">
+          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+
+            <Box w="100%" mb="4">
+            <Breadcrumb mb="5">
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                {this.state.page &&
+            <>
+              <BreadcrumbItem>
+                <BreadcrumbLink href={'/audits/'}>Audit</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbItem>Start a new audit</BreadcrumbItem>
+            </>
+                }
+              </Breadcrumb>
+              <Text fontSize="5xl" mb="4">Start A New Audit</Text>
+              
+            
+              <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-          {this.state.error}
-        </Alert>
-        <Form onSubmit={e => { e.preventDefault(); this.startAudit(); } } className="form mt-3">
-          <Form.Group as={Row} controlId="firstURL">
-            <Form.Label column sm="5">Initial URL</Form.Label>
-            <Col sm="7">
-              <Form.Control name="firstURL" type="url" value={this.state.firstURL}
+                {this.state.error}
+              </Alert>
+              <Box w="50%" mb="4">
+
+                <Form onSubmit={e => { e.preventDefault(); this.startAudit(); } } className="form mt-3">
+                  <Stack spacing={5}>
+
+                    <FormControl id="firstURL">
+                      <FormLabel column sm="5">Initial URL</FormLabel>
+                      <Input name="firstURL" type="url" value={this.state.firstURL}
                 onChange={e => this.handleChange(e)}/>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="standard">
-            <Form.Label column sm="5">Standard</Form.Label>
-            <Col sm="7">
-              <Form.Control name="standard" as="select" value={this.state.standard}
+                    </FormControl>
+                    <FormControl id="standard">
+                      <FormLabel column sm="5">Standard</FormLabel>
+                      <Select name="standard" value={this.state.standard}
                   onChange={e => this.handleChange(e)}>
-                <option value="wcag2a">WCAG 2.0 Level A</option>
-                <option value="wcag2aa">WCAG 2.0 Level AA</option>
-                <option value="wcag21aa">WCAG 2.1 Level AA</option>
-                <option value="section508">Section 508</option>
-              </Form.Control>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="checkSubdomains">
-            <Col sm="5"/>
-            <Col sm="7">
-              <Form.Check name="checkSubdomains" type="checkbox" value={this.state.checkSubdomains}
+                        <option value="wcag2a">WCAG 2.0 Level A</option>
+                        <option value="wcag2aa">WCAG 2.0 Level AA</option>
+                        <option value="wcag21aa">WCAG 2.1 Level AA</option>
+                        <option value="section508">Section 508</option>
+                      </Select>
+                    </FormControl>
+                    <FormControl id="checkSubdomains">
+                      <Checkbox name="checkSubdomains" type="checkbox" value={this.state.checkSubdomains}
                 onChange={e => this.handleChange(e)} checked={this.state.checkSubdomains}
-                label="Check subdomains"/>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="maxDepth">
-            <Form.Label column sm="5">Maximum crawling depth</Form.Label>
-            <Col sm="7">
-              <Form.Control name="maxDepth" type="number" value={this.state.maxDepth}
+                      >Check subdomains</Checkbox>
+                    </FormControl>
+                    <FormControl id="maxDepth">
+                      <FormLabel column sm="5">Maximum crawling depth</FormLabel>
+                      <Input name="maxDepth" type="number" value={this.state.maxDepth}
                 onChange={e => this.handleChange(e)}/>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="maxPagesPerDomain">
-            <Form.Label column sm="5">Maximum number of pages checked per domain (0 for no limit)</Form.Label>
-            <Col sm="7">
-              <Form.Control name="maxPagesPerDomain" type="number" value={this.state.maxPagesPerDomain}
+                    </FormControl>
+                    <FormControl id="maxPagesPerDomain">
+                      <FormLabel column sm="5">Maximum number of pages checked per domain (0 for no limit)</FormLabel>
+                      <Input name="maxPagesPerDomain" type="number" value={this.state.maxPagesPerDomain}
                 onChange={e => this.handleChange(e)}/>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="sitemaps">
-            <Col sm="5"/>
-            <Col sm="7">
-              <Form.Check name="sitemaps" type="checkbox" value={this.state.sitemaps}
-                onChange={e => this.handleChange(e)} checked={this.state.sitemaps}
-                label="Use site maps to discover pages"/>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="includeMatch">
-            <Form.Label column sm="5">Include only paths matching the regular
-              expression</Form.Label>
-            <Col sm="7">
-              <Form.Control name="includeMatch" value={this.state.includeMatch}
+                    </FormControl>
+                    <FormControl id="sitemaps">
+                      <Checkbox name="sitemaps" type="checkbox" value={this.state.sitemaps}
+                onChange={e => this.handleChange(e)} checked={this.state.sitemaps}>Use site maps to discover pages</Checkbox>
+                    </FormControl>
+                    <FormControl id="includeMatch">
+                      <FormLabel column sm="5">Include only paths matching the regular
+              expression</FormLabel>
+                      <Input name="includeMatch" value={this.state.includeMatch}
                 onChange={e => this.handleChange(e)}/>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="browser">
-            <Form.Label column sm="5">Browser</Form.Label>
-            <Col sm="7">
-              <Form.Control name="browser" as="select" value={this.state.browser}
+                    </FormControl>
+                    <FormControl id="browser">
+                      <FormLabel column sm="5">Browser</FormLabel>
+                      <Select name="browser" value={this.state.browser}
                   onChange={e => this.handleChange(e)}>
-                <option value="firefox">Firefox</option>
-                <option value="chrome">Chromium</option>
-              </Form.Control>
-            </Col>
-          </Form.Group>
-          <Form.Group as={Row} controlId="postLoadingDelay">
-            <Form.Label column sm="5">Additional delay to let dynamic pages load (ms)</Form.Label>
-            <Col sm="7">
-              <Form.Control name="postLoadingDelay" type="number" value={this.state.postLoadingDelay}
+                        <option value="firefox">Firefox</option>
+                        <option value="chrome">Chromium</option>
+                      </Select>
+                    </FormControl>
+                    <FormControl id="postLoadingDelay">
+                      <FormLabel column sm="5">Additional delay to let dynamic pages load (ms)</FormLabel>
+                      <Input name="postLoadingDelay" type="number" value={this.state.postLoadingDelay}
                 onChange={e => this.handleChange(e)}/>
-            </Col>
-          </Form.Group>
-          <div className="text-center">
-            <Button variant="primary" type="submit">
+                    </FormControl>
+                    <Button mt="5"colorScheme="pink"
+          size="lg" type="submit">
               Start Audit
-            </Button>
-          </div>
-        </Form>
+                    </Button>
+                  </Stack>
+                </Form>
+              </Box>
+            </Box>
+          </Flex>
+        </Flex>
       </>
     );
   }
