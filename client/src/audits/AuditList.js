@@ -141,7 +141,7 @@ class AuditList extends Component {
         {auditsHTML &&
           <section>
             <h2>Saved Audits</h2>
-            <Table bordered size="sm" className="data">
+            <Table bordered size="sm" className="table">
               <thead>
                 <tr>
                   <th>Domain</th>

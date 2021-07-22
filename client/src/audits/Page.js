@@ -45,11 +45,12 @@ class Page extends Component {
     ]);
     return (
       <>
-        <Breadcrumb>
-          <LinkContainer to="/audits/">
-            <Breadcrumb.Item>Audits</Breadcrumb.Item>
-          </LinkContainer>
-          {this.state.page &&
+        <div className="container">
+          <Breadcrumb>
+            <LinkContainer to="/audits/">
+              <Breadcrumb.Item>Audits</Breadcrumb.Item>
+            </LinkContainer>
+            {this.state.page &&
             <>
               <LinkContainer to={'/audits/'+this.state.page.auditId}>
                 <Breadcrumb.Item>Audit</Breadcrumb.Item>
@@ -59,16 +60,16 @@ class Page extends Component {
               </LinkContainer>
               <Breadcrumb.Item active>Page</Breadcrumb.Item>
             </>
-          }
-        </Breadcrumb>
-        <h1>
-          {this.state.page ? <span className="code">{this.state.page.url}</span> : ''}
-        </h1>
-        <Alert show={this.state.error != null} variant="danger" dismissible
+            }
+          </Breadcrumb>
+          <h1>
+            {this.state.page ? <span className="code">{this.state.page.url}</span> : ''}
+          </h1>
+          <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-          {this.state.error}
-        </Alert>
-        {this.state.page &&
+            {this.state.error}
+          </Alert>
+          {this.state.page &&
           <>
             <p className="text-center"><a href={this.state.page.url} target="_blank"
               rel="noopener noreferrer">Visit the page</a></p>
@@ -116,7 +117,8 @@ class Page extends Component {
               ))
             }
           </>
-        }
+          }
+        </div>
       </>
     );
   }
