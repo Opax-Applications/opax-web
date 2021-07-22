@@ -3,7 +3,6 @@ import { Router, Switch, Route } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { wrapHistory } from "oaf-react-router";
 
-import './App.scss';
 import Header from './Header';
 import Footer from './Footer';
 import ServerAPI from './ServerAPI';
