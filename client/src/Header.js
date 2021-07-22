@@ -1,14 +1,11 @@
 import React from 'react';
-import { faUniversalAccess } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 
 const Header = () => {
   return (
     <header>
-      <p className="bannerTitle">
+      <p className="bannerTitle mt-3 ml-3">
         <a href="/">
-          Opax Monitor
+          <img alt="Opax" src="/logo.svg" width="150" />
         </a>
       </p>
     </header>
