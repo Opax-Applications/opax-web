@@ -1,9 +1,50 @@
 import React, { Component } from 'react';
+import { Box, Flex, SimpleGrid, Text, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
 
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import { Button, ButtonGroup } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
-
+// import Button from 'react-bootstrap/Button';
+// import Table from 'react-bootstrap/Table';
+import {
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  MenuItemOption,
+  MenuGroup,
+  MenuOptionGroup,
+  MenuIcon,
+  MenuCommand,
+  MenuDivider,
+} from "@chakra-ui/react";
 import { faTrashAlt, faDownload } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
@@ -83,83 +124,89 @@ class AuditList extends Component {
         .sort((a,b) => b.dateStarted - a.dateStarted);
       auditsHTML = sortedAudits.map(audit => (
         this.props.permissions.domainReadAllowed(audit.initialDomainName) &&
-        <tr key={audit._id}>
-          <td className="code"><Link to={'/audits/'+audit._id}>{audit.initialDomainName}</Link></td>
-          <td className="text-right">{(new Date(audit.dateStarted)).toLocaleDateString()}</td>
-          <td className="text-right">{audit.nbCheckedURLs}</td>
-          <td className="text-right">{audit.nbViolations}</td>
+        <Tr key={audit._id}>
+          <Td><Link to={'/audits/'+audit._id}>{audit.initialDomainName}</Link></Td>
+          <Td>{(new Date(audit.dateStarted)).toLocaleDateString()}</Td>
+          <Td isNumeric>{audit.nbCheckedURLs}</Td>
+          <Td isNumeric>{audit.nbViolations}</Td>
           {this.props.permissions.domainDeleteAllowed(audit.initialDomainName) &&
-            <td className="text-right">
+            <Td>
               <Button title="Remove" variant="danger" size="xs" onClick={(e) => this.removeAudit(audit._id)}><FontAwesomeIcon icon={faTrashAlt} title="Remove" /></Button>
               {this.props.permissions.anyAuditCreateAllowed() &&
                 <Button title="Export Results" variant="info" size="xs" onClick={(e) => this.exportAudit(audit._id)}><FontAwesomeIcon icon={faDownload} title="Export Results" /></Button>
               }
-            </td>
+            </Td>
           }
-        </tr>
+        </Tr>
       ));
     }
     return (
       <>
-        <div className="container">
-          <h1 className="mt-3">Welcome to Opax Monitor</h1>
-          <Alert show={this.state.error != null} variant="danger" dismissible
-            onClose={() => this.setState({ error: null })} tabIndex="0">
-            {this.state.error}
-          </Alert>
-          <Login server={this.props.server} permissions={this.props.permissions}
-          localLogin={(u,p) => this.localLogin(u,p)} logout={() => this.logout()}/>
-          {!anyPermission &&
+        <Flex direction="column" h="100vh">
+          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+
+            <Box w="100%" mb="4">
+              <Text fontSize="5xl" mb="4">Dashboard</Text>
+              <HStack spacing="24px" mb="5">
+               
+                {!anyPermission &&
           <>
             <p>You do not currently have any permission.</p>
             {!this.props.permissions.loggedIn() &&
               <p>You might want to log in.</p>
             }
           </>
-          }
-          {this.props.permissions.anyAuditCreateAllowed() &&
+                }
+                {this.props.permissions.anyAuditCreateAllowed() &&
           <>
             <LinkContainer to="/audits/create">
-              <Button>Start a new audit</Button>
+              <Button colorScheme="pink"
+          size="lg">Start a new audit</Button>
             </LinkContainer>
             {' '}
             <ImportButton server={this.props.server} getAudits={
               () => this.getAudits()}/>
           </>
-          }
-          {this.props.permissions.userAndGroupEditAllowed() &&
+                }
+                {this.props.permissions.userAndGroupEditAllowed() &&
           <>
             {' '}
             <LinkContainer to="/users/">
-              <Button>Users</Button>
+              <Button colorScheme="blue">Users</Button>
             </LinkContainer>
             {' '}
             <LinkContainer to="/groups/">
-              <Button>Groups</Button>
+              <Button colorScheme="blue">Groups</Button>
             </LinkContainer>
           </>
-          }
-          {auditsHTML &&
+                }
+                <Login server={this.props.server} permissions={this.props.permissions}
+          localLogin={(u,p) => this.localLogin(u,p)} logout={() => this.logout()}/>
+              </HStack>
+              {auditsHTML &&
           <section>
-            <h2>Saved Audits</h2>
-            <Table bordered size="sm" className="table">
-              <thead>
-                <tr>
-                  <th>Domain</th>
-                  <th className="text-right">Date</th>
-                  <th className="text-right">Checked URLs</th>
-                  <th className="text-right">Violations</th>
+            <Text fontSize="lg" mb="4">Saved Audits</Text>
+
+            <Table colorScheme="whiteAlpha" variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>Domain</Th>
+                  <Th>Date</Th>
+                  <Th isNumeric>Checked URLs</Th>
+                  <Th isNumeric>Violations</Th>
                   {this.props.permissions.anyAuditCreateAllowed() &&
-                    <th className="text-right"></th>}
-                </tr>
-              </thead>
-              <tbody>
+                    <Th></Th>}
+                </Tr>
+              </Thead>
+              <Tbody>
                 {auditsHTML}
-              </tbody>
+              </Tbody>
             </Table>
           </section>
-          }
-        </div>
+              }
+            </Box>
+          </Flex>
+        </Flex>
       </>
     );
   }

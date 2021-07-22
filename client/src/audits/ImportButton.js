@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
+import { Button, ButtonGroup } from "@chakra-ui/react";
 
 import Alert from 'react-bootstrap/Alert';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal';
 
@@ -68,7 +68,7 @@ class ImportButton extends Component {
   render() {
     return (
       <>
-        <Button onClick={() => this.setState({ displayForm: true })}>
+        <Button colorScheme="blue" onClick={() => this.setState({ displayForm: true })}>
           Import Audit
         </Button>
         <Modal show={this.state.displayForm} onHide={() => this.hideForm()}>

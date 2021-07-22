@@ -1,12 +1,38 @@
 import React, { Component } from 'react';
 import Alert from 'react-bootstrap/Alert';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
+// import Breadcrumb from 'react-bootstrap/Breadcrumb';
 import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
+// import Table from 'react-bootstrap/Table';
 import { LinkContainer } from 'react-router-bootstrap';
 import PropTypes from 'prop-types';
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbSeparator,
+} from "@chakra-ui/react";
+
+import { Box, Flex, SimpleGrid, Text, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
 
 import ServerAPI from '../ServerAPI';
 
@@ -47,18 +73,18 @@ class Page extends Component {
       <>
         <div className="container">
           <Breadcrumb>
-            <LinkContainer to="/audits/">
-              <Breadcrumb.Item>Audits</Breadcrumb.Item>
-            </LinkContainer>
+            <BreadcrumbItem>
+              <BreadcrumbLink href="/">Audits</BreadcrumbLink>
+            </BreadcrumbItem>
             {this.state.page &&
             <>
-              <LinkContainer to={'/audits/'+this.state.page.auditId}>
-                <Breadcrumb.Item>Audit</Breadcrumb.Item>
-              </LinkContainer>
-              <LinkContainer to={'/domains/'+this.state.page.domainId}>
-                <Breadcrumb.Item>Domain</Breadcrumb.Item>
-              </LinkContainer>
-              <Breadcrumb.Item active>Page</Breadcrumb.Item>
+              <BreadcrumbItem>
+                <BreadcrumbLink href={'/audits/'+this.state.page.auditId}>Audit</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbItem>
+                <BreadcrumbLink href={'/domains/'+this.state.page.domainId}>Domain</BreadcrumbLink>
+              </BreadcrumbItem>
+              <BreadcrumbItem>Page</BreadcrumbItem>
             </>
             }
           </Breadcrumb>
@@ -86,33 +112,33 @@ class Page extends Component {
               .sort((v1, v2) => impacts.get(v2.impact) - impacts.get(v1.impact))
               .map(violation => (
                 <Table bordered size="sm" key={violation.id} className="data">
-                  <tbody>
+                  <Tbody>
                     {/*<tr><th>Id</th><td className="code">{violation.id}</td></tr>*/}
-                    <tr><th>Description</th><td>
+                    <Tr><Th>Description</Th><Td>
                       {violation.description + ' '}
                       <Button variant="info" size="xs" title="Open rule description on Deque's website"
                           onClick={e => window.open(violation.descLink, '_blank')}>
                         <FontAwesomeIcon icon={faInfoCircle}/>
                       </Button>
-                    </td></tr>
-                    <tr><th>Impact</th><td className={violation.impact}>{violation.impact}</td></tr>
-                    <tr><th>Category</th><td>{violation.category}</td></tr>
-                    <tr><th>Nodes</th><td>
+                    </Td></Tr>
+                    <Tr><Th>Impact</Th><Td className={violation.impact}>{violation.impact}</Td></Tr>
+                    <Tr><Th>Category</Th><Td>{violation.category}</Td></Tr>
+                    <Tr><Th>Nodes</Th><Td>
                       <Table bordered size="sm" className="data">
-                        <thead>
-                          <tr><th>Target</th><th>HTML</th></tr>
-                        </thead>
-                        <tbody>
+                        <Thead>
+                          <Tr><Th>Target</Th><Th>HTML</Th></Tr>
+                        </Thead>
+                        <Tbody>
                           {violation.nodes.map(node => (
-                            <tr key={node._id}>
-                              <td className="code">{node.target}</td>
-                              <td className="code">{node.html}</td>
-                            </tr>
+                            <Tr key={node._id}>
+                              <Td className="code">{node.target}</Td>
+                              <Td className="code">{node.html}</Td>
+                            </Tr>
                           ))}
-                        </tbody>
+                        </Tbody>
                       </Table>
-                    </td></tr>
-                  </tbody>
+                    </Td></Tr>
+                  </Tbody>
                 </Table>
               ))
             }

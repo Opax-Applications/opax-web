@@ -1,34 +1,34 @@
-$primary: #290C58;
-$secondary: #FFF7F0;
+// $primary: #290C58;
+// $secondary: #FFF7F0;
 
-$color-contrast-dark:      $primary;
-$color-contrast-light:     $secondary;
+// $color-contrast-dark:      $primary;
+// $color-contrast-light:     $secondary;
 
-$body-bg: #FFF7F0;
-$body-color: #290C58;
+// $body-bg: #FFF7F0;
+// $body-color: #290C58;
 
-$input-btn-padding-y:         1rem !default;
-$input-btn-padding-x:         1rem !default;
-$btn-border-radius: 45px;
+// $input-btn-padding-y:         1rem !default;
+// $input-btn-padding-x:         1rem !default;
+// $btn-border-radius: 45px;
 
-$navbar-light-color: $primary;
+// $navbar-light-color: $primary;
 
-$nav-link-padding-x: 4rem;
-$nav-link-padding-y: 2rem;
+// $nav-link-padding-x: 4rem;
+// $nav-link-padding-y: 2rem;
 
-$navbar-light-toggler-border-color: transparent;
+// $navbar-light-toggler-border-color: transparent;
 
-$card-border-width: 0;
-// Fonts 
+// $card-border-width: 0;
+// // Fonts 
 
 @import url('https://fonts.googleapis.com/css2?family=Archivo:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
 
-$font-family-sans-serif: 'Archivo', sans-serif;
-$font-family-serif: 'Lora', serif;
+// $font-family-sans-serif: 'Archivo', sans-serif;
+// $font-family-serif: 'Lora', serif;
 
-$font-family-base: $font-family-serif;
+// $font-family-base: $font-family-serif;
 
-$input-btn-font-family: $font-family-sans-serif;
-$headings-font-family: $font-family-sans-serif;
+// $input-btn-font-family: $font-family-sans-serif;
+// $headings-font-family: $font-family-sans-serif;
 
-@import "~bootstrap-scss/bootstrap";
+// @import "~bootstrap/scss/bootstrap.scss";
