@@ -101,22 +101,23 @@ class AuditList extends Component {
     }
     return (
       <>
-        <h1>Opax Monitor</h1>
-        <Alert show={this.state.error != null} variant="danger" dismissible
+        <div className="container">
+          <h1 className="mt-3">Welcome to Opax Monitor</h1>
+          <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-          {this.state.error}
-        </Alert>
-        <Login server={this.props.server} permissions={this.props.permissions}
+            {this.state.error}
+          </Alert>
+          <Login server={this.props.server} permissions={this.props.permissions}
           localLogin={(u,p) => this.localLogin(u,p)} logout={() => this.logout()}/>
-        {!anyPermission &&
+          {!anyPermission &&
           <>
             <p>You do not currently have any permission.</p>
             {!this.props.permissions.loggedIn() &&
               <p>You might want to log in.</p>
             }
           </>
-        }
-        {this.props.permissions.anyAuditCreateAllowed() &&
+          }
+          {this.props.permissions.anyAuditCreateAllowed() &&
           <>
             <LinkContainer to="/audits/create">
               <Button>Start a new audit</Button>
@@ -125,8 +126,8 @@ class AuditList extends Component {
             <ImportButton server={this.props.server} getAudits={
               () => this.getAudits()}/>
           </>
-        }
-        {this.props.permissions.userAndGroupEditAllowed() &&
+          }
+          {this.props.permissions.userAndGroupEditAllowed() &&
           <>
             {' '}
             <LinkContainer to="/users/">
@@ -137,8 +138,8 @@ class AuditList extends Component {
               <Button>Groups</Button>
             </LinkContainer>
           </>
-        }
-        {auditsHTML &&
+          }
+          {auditsHTML &&
           <section>
             <h2>Saved Audits</h2>
             <Table bordered size="sm" className="table">
@@ -157,7 +158,8 @@ class AuditList extends Component {
               </tbody>
             </Table>
           </section>
-        }
+          }
+        </div>
       </>
     );
   }

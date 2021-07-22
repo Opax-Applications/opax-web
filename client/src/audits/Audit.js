@@ -63,20 +63,21 @@ class Audit extends Component {
     };
     return (
       <>
-        <Breadcrumb>
-          <LinkContainer to="/audits/">
-            <Breadcrumb.Item>Audits</Breadcrumb.Item>
-          </LinkContainer>
-          <Breadcrumb.Item active>Audit</Breadcrumb.Item>
-        </Breadcrumb>
-        <Alert show={this.state.error != null} variant="danger" dismissible
+        <div className="container">
+          <Breadcrumb>
+            <LinkContainer to="/audits/">
+              <Breadcrumb.Item>Audits</Breadcrumb.Item>
+            </LinkContainer>
+            <Breadcrumb.Item active>Audit</Breadcrumb.Item>
+          </Breadcrumb>
+          <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-          {this.state.error}
-        </Alert>
-        <h1>{this.state.audit ?
-          <span className="code">{this.state.audit.initialDomainName}</span>
-          : ''}</h1>
-        {this.state.audit &&
+            {this.state.error}
+          </Alert>
+          <h1>{this.state.audit ?
+            <span className="code">{this.state.audit.initialDomainName}</span>
+            : ''}</h1>
+          {this.state.audit &&
           <>
             {this.state.statusLink &&
               <p>The audit is still running. <Link to={'/audits/' + this.props.match.params.auditId + '/status'}>See status page</Link>.</p>
@@ -166,7 +167,8 @@ class Audit extends Component {
               </>
             }
           </>
-        }
+          }
+        </div>
       </>
     );
   }

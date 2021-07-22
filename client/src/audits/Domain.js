@@ -39,25 +39,26 @@ class Domain extends Component {
   render() {
     return (
       <>
-        <Breadcrumb>
-          <LinkContainer to="/audits/">
-            <Breadcrumb.Item>Audits</Breadcrumb.Item>
-          </LinkContainer>
-          {this.state.domain &&
+        <div className="container">
+          <Breadcrumb>
+            <LinkContainer to="/audits/">
+              <Breadcrumb.Item>Audits</Breadcrumb.Item>
+            </LinkContainer>
+            {this.state.domain &&
             <>
               <LinkContainer to={'/audits/'+this.state.domain.auditId}>
                 <Breadcrumb.Item>Audit</Breadcrumb.Item>
               </LinkContainer>
               <Breadcrumb.Item active>Domain</Breadcrumb.Item>
             </>
-          }
-        </Breadcrumb>
-        <Alert show={this.state.error != null} variant="danger" dismissible
+            }
+          </Breadcrumb>
+          <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-          {this.state.error}
-        </Alert>
-        <h1>{this.state.domain ? <span className="code">{this.state.domain.name}</span> : ''}</h1>
-        {this.state.domain &&
+            {this.state.error}
+          </Alert>
+          <h1>{this.state.domain ? <span className="code">{this.state.domain.name}</span> : ''}</h1>
+          {this.state.domain &&
           <>
             <section>
               <h2>Statistics</h2>
@@ -75,7 +76,8 @@ class Domain extends Component {
               items={this.state.domain.pages} itemType="page"/>
             <PageTable domain={this.state.domain}/>
           </>
-        }
+          }
+        </div>
       </>
     );
   }
