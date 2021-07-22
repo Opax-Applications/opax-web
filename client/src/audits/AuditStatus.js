@@ -175,7 +175,7 @@ class AuditStatus extends React.Component {
               <LinkContainer to={'/audits/'+this.props.match.params.auditId}>
 
                 <Button colorScheme="pink"
-          size="lg">View audit results</Button>
+          size="lg" mr="4">View audit results</Button>
               </LinkContainer>
 
               <Button colorScheme="pink"

@@ -95,7 +95,7 @@ class Audit extends Component {
     return (
       <>
         <Flex direction="column" h="100vh">
-          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+          <Flex w="100%" maxWidth={1480} mx="auto" px="6">
 
             <Box w="100%" mb="4">
               {/* <Breadcrumb>
@@ -108,18 +108,19 @@ class Audit extends Component {
             onClose={() => this.setState({ error: null })} tabIndex="0">
                 {this.state.error}
               </Alert>
-              <h1>{this.state.audit ?
+              {/* <h1>{this.state.audit ?
                 <span className="code">{this.state.audit.initialDomainName}</span>
-                : ''}</h1>
+                : ''}</h1> */}
               {this.state.audit &&
           <>
             {this.state.statusLink &&
             <>
-              <Alert>
-The audit is still running. <Link to={'/audits/' + this.props.match.params.auditId + '/status'}>See status page</Link>.  </Alert>
+              <Alert mb="5" color={"#444"} status="info" variant="subtle">
+The audit is still running.  <Link to={'/audits/' + this.props.match.params.auditId + '/status'}>See status page</Link>.  </Alert>
             </>
             }
-            <Text fontSize="5xl" mb="5">Audit Details</Text>
+            <Text fontSize="5xl">Audit Details</Text>
+            <Text fontSize="lg" mb="5" mt="">{this.state.audit.initialDomainName}</Text>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 5, lg: 8 }}>
 
               {/* <Stat shadow={'xl'}

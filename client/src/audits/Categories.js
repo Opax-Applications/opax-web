@@ -1,5 +1,35 @@
 import React, { Component } from 'react';
-import Table from 'react-bootstrap/Table';
+import { Box, Flex, SimpleGrid, Text, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import { Button, ButtonGroup } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import PropTypes from 'prop-types';
 import { PieChart } from 'react-minimal-pie-chart';
 
@@ -80,25 +110,28 @@ class Categories extends Component {
     ];
     return (
       <section>
-        <h2>Categories</h2>
+        <Text fontSize="3xl" mt="5" mb="5">Scanned Pages</Text>
+
         <div style={{ display:'flex', flexWrap:'wrap-reverse' }}>
-          <Table bordered size="sm" className="data">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th className="text-right">Violations</th>
-              </tr>
-            </thead>
-            <tbody>
-              {data.map(
-                cat => <tr key={cat.name}>
-                  <td>{cat.name}</td>
-                  <td>{cat.count}</td>
-                </tr>
-              )}
-            </tbody>
-          </Table>
-          <PieChart
+          <SimpleGrid columns={2} spacing={10}>
+
+            <Table colorScheme="whiteAlpha" variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>Name</Th>
+                  <Th isNumeric>Violations</Th>
+                </Tr>
+              </Thead>
+              <Tbody>
+                {data.map(
+                  cat => <tr key={cat.name}>
+                    <Td>{cat.name}</Td>
+                    <Td isNumeric>{cat.count}</Td>
+                  </tr>
+                )}
+              </Tbody>
+            </Table>
+            <PieChart
             viewBoxSize={[580, 270]}
             style={{ 'width':'580px', 'height':'270px' }}
             data={data.map(
@@ -123,7 +156,8 @@ class Categories extends Component {
             injectSvg={() =>
               <desc>Pie chart of violation categories</desc>
             }
-          />
+            />
+          </SimpleGrid>
         </div>
       </section>
     );

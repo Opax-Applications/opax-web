@@ -1,28 +1,57 @@
 import React from 'react';
-import Table from 'react-bootstrap/Table';
-import PropTypes from 'prop-types';
+import { Box, Flex, SimpleGrid, Text, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import { Button, ButtonGroup } from "@chakra-ui/react";
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 
 const PageTable = ({ domain }) => {
   return (
     <section>
-      <h2>Scanned Pages</h2>
-      <p style={{marginBottom: 0}}>Click on a URL to get a full report for that page.</p>
-      <Table bordered size="sm" className="data">
-        <thead>
-          <tr><th>URL</th><th className="text-right">Violations</th></tr>
-        </thead>
-        <tbody>
+      <Text fontSize="3xl" mt="5" mb="5">Scanned Pages</Text>
+
+            <Table colorScheme="whiteAlpha" variant="simple">
+        <Thead>
+          <Tr><Th>URL</Th><Th className="text-right">Violations</Th></Tr>
+        </Thead>
+        <Tbody>
           {domain.pages.map(page => (
-            <tr key={page._id}>
-              <td className="code">
+            <Tr key={page._id}>
+              <Td className="code">
                 <Link to={'/pages/'+page._id}>{page.url}</Link>
-              </td>
-              <td className="text-right">{page.nbViolations}</td>
-            </tr>
+              </Td>
+              <Td className="text-right">{page.nbViolations}</Td>
+            </Tr>
           ))}
-        </tbody>
+        </Tbody>
       </Table>
     </section>
   );
