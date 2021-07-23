@@ -1,13 +1,47 @@
 import React, { Component } from 'react';
 
-import Alert from 'react-bootstrap/Alert';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import Button from 'react-bootstrap/Button';
+
+import { Box, Alert, Flex, Heading, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
+
+
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
-import Table from 'react-bootstrap/Table';
 
 import { faTrashAlt } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -65,7 +99,8 @@ class User extends Component {
   
   componentDidUpdate(prevProps, prevState) {
     if ((this.state.error && !prevState.error) || (this.state.success && !prevState.success))
-      document.querySelector('.alert').focus();
+    return;
+      // document.querySelector('.alert').focus();
   }
   
   updateGroupsToAdd() {
@@ -138,13 +173,15 @@ class User extends Component {
   breadcrumbs() {
     return (
       <Breadcrumb>
-        <LinkContainer to="/">
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-        </LinkContainer>
-        <LinkContainer to="/users">
-          <Breadcrumb.Item>Users</Breadcrumb.Item>
-        </LinkContainer>
-        <Breadcrumb.Item active>User</Breadcrumb.Item>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/">Home</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+          <BreadcrumbLink href={'/users/'}>Users</BreadcrumbLink>
+        </BreadcrumbItem>
+        <BreadcrumbItem>
+          <BreadcrumbLink current href={'#'}>{this.state.user.username}</BreadcrumbLink>
+        </BreadcrumbItem>
       </Breadcrumb>
     );
   }
@@ -156,7 +193,8 @@ class User extends Component {
       <tr key={group._id}>
         <td className="code"><Link to={'/groups/'+group._id}>{group.name}</Link></td>
         <td className="text-right">
-          <Button title="Remove" variant="danger" size="xs"
+          <Button  mb="5" mt="5" colorScheme="blue"
+          size="md"
               onClick={(e) => this.removeGroup(group._id)}>
             <FontAwesomeIcon icon={faTrashAlt} title="Remove" />
           </Button>
@@ -193,95 +231,99 @@ class User extends Component {
     const groupsHTML = this.userGroupList();
     return (
       <>
-        {this.breadcrumbs()}
-        <h1>{this.state.user._id ? "User: " + this.state.user.username : "New User"}</h1>
-        <Alert show={this.state.error != null} variant="danger" dismissible
+        <Flex direction="column" h="100vh">
+          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+
+            <Box w="100%" mb="4">
+              {this.breadcrumbs()}
+              <Text mt="5" isTruncated fontSize="5xl">{this.state.user._id ? "User: " + this.state.user.username : "New User"}</Text>
+
+              <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-          {this.state.error}
-        </Alert>
-        <Alert show={this.state.success != null} variant="success" dismissible
+                {this.state.error}
+              </Alert>
+              <Alert show={this.state.success != null} variant="success" dismissible
             onClose={() => this.setState({ success: null })} tabIndex="0">
-          {this.state.success}
-        </Alert>
-        {this.state.user._id != null &&
-          <Button variant="danger" size="sm" onClick={(e) => this.removeUser()}
+                {this.state.success}
+              </Alert>
+              {this.state.user._id != null &&
+          <Button  mb="5"  colorScheme="blue"
+          size="md"nClick={(e) => this.removeUser()}
               disabled={this.state.user._id === this.props.permissions.user._id}>
             Remove user
           </Button>
-        }
-        <Container fluid className="px-0"><Row><Col sm="10">
-          <Form onSubmit={e => { e.preventDefault(); this.saveUser(); } } className="form mt-3 border">
-            <Form.Group as={Row} controlId="username">
-              <Form.Label column sm="4">Username</Form.Label>
-              <Col sm="8">
-                <Form.Control name="username" type="text" size="30" value={this.state.user.username}
+              }
+              <Form onSubmit={e => { e.preventDefault(); this.saveUser(); } } className="form mt-3 border">
+                <Stack spacing={5}>
+                  <FormControl id="username">
+                    <FormLabel>Username</FormLabel>
+                    <Input name="username" type="text" value={this.state.user.username}
                   required onChange={e => this.handleUserChange(e)}/>
-              </Col>
-            </Form.Group>
-            <Form.Group as={Row} controlId="firstname">
-              <Form.Label column sm="4">Firstname</Form.Label>
-              <Col sm="8">
-                <Form.Control name="firstname" type="text" size="30" value={this.state.user.firstname}
+                  </FormControl>
+                  <FormControl id="firstname">
+                    <FormLabel>First name</FormLabel>
+                    <Input name="firstname" type="text" value={this.state.user.firstname}
                   onChange={e => this.handleUserChange(e)}/>
-              </Col>
-            </Form.Group>
-            <Form.Group as={Row} controlId="lastname">
-              <Form.Label column sm="4">Lastname</Form.Label>
-              <Col sm="8">
-                <Form.Control name="lastname" type="text" size="30" value={this.state.user.lastname}
+                  </FormControl>
+                  <FormControl id="lastname">
+                    <FormLabel>Last name</FormLabel>
+                    <Input name="lastname" type="text" value={this.state.user.lastname}
                   onChange={e => this.handleUserChange(e)}/>
-              </Col>
-            </Form.Group>
-            <Form.Group as={Row} controlId="password">
-              <Form.Label column sm="4">Password</Form.Label>
-              <Col sm="8">
-                <Form.Control name="password" type="password" size="30"
+                  </FormControl>
+                  <FormControl id="password">
+                    <FormLabel>Password</FormLabel>
+                    <Input name="password" type="password"
                   value={this.state.user.password}
                   onChange={e => this.handleUserChange(e)}
                   required={this.state.user._id == null}
-                />
-              </Col>
-            </Form.Group>
-            <div className="text-center">
-              <Button variant="primary" type="submit">
+                    />
+                  </FormControl>
+                  <div className="text-center">
+                    <Button colorScheme="pink"
+          size="lg" mt="5" mb="5" type="submit">
                 Save
-              </Button>
-            </div>
-          </Form>
-          {groupsHTML &&
+                    </Button>
+                  </div>
+                </Stack>
+              </Form>
+              {groupsHTML &&
             <section className="border">
-              <h2>Groups</h2>
-              <Table bordered size="sm" className="data">
-                <thead>
-                  <tr>
-                    <th>Name</th>
-                    <th className="text-right"></th>
-                  </tr>
-                </thead>
-                <tbody>
+                      <Text mt="5" isTruncated fontSize="2xl">Groups</Text>
+
+            <Table colorScheme="whiteAlpha" variant="simple">
+                <Thead>
+                  <Tr>
+                    <Th>Name</Th>
+                    <Th></Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
                   {groupsHTML}
-                </tbody>
+                </Tbody>
               </Table>
               {this.state.groupsToAdd && this.state.groupsToAdd.length > 0 &&
                 <Form onSubmit={e => { e.preventDefault(); this.addGroup(); } } inline>
-                  <Form.Group controlId="selectedGroup">
-                    <Form.Label className="mr-1">Add a group:</Form.Label>
-                    <Form.Control name="selectedGroup" as="select" value={this.state.selectedGroup}
+                  <FormControl id="selectedGroup">
+                    <FormLabel className="mr-1">Add a group:</FormLabel>
+                    <Select name="selectedGroup" as="select" value={this.state.selectedGroup}
                         onChange={e => this.handleChange(e)}>
                       {this.state.groupsToAdd
                         .map((g) =>
                           <option key={g._id} value={g._id}>{g.name}</option>
                         )}
-                    </Form.Control>
-                  </Form.Group>
-                  <Button variant="primary" type="submit" className="ml-2">
+                    </Select>
+                  </FormControl>
+                  <Button colorScheme="pink"
+          size="lg" mt="5" mb="5" type="submit">
                     Add
                   </Button>
                 </Form>
               }
             </section>
-          }
-        </Col></Row></Container>
+              }
+            </Box>
+          </Flex>
+        </Flex>
       </>
     );
   }
