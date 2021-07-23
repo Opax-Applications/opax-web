@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/', controller.get_audits);
 router.post('/start', controller.start);
+router.post('/start/:apiKey', controller.startWithApiKey);
 router.post('/import', controller.import_audit);
 router.get('/:auditId/export', controller.export_audit);
 router.get('/:auditId/status', controller.get_audit_status);

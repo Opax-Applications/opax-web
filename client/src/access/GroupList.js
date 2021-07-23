@@ -110,6 +110,7 @@ class GroupList extends Component {
     return this.state.groups.map(group => (
       <Tr key={group._id}>
         <Td className="code"><Link to={'/groups/'+group._id}>{group.name}</Link></Td>
+        <Td>{group.apiKey}</Td>
         <Td>{yesNoIcon(group.permissions.readAllAudits)}</Td>
         <Td>{yesNoIcon(group.permissions.createAllAudits)}</Td>
         <Td>{yesNoIcon(group.permissions.deleteAllAudits)}</Td>
@@ -159,6 +160,7 @@ class GroupList extends Component {
               <Thead>
                 <Tr>
                   <Th>Name</Th>
+                  <Th>Api Key</Th>
                   <Th>Read all audits</Th>
                   <Th>Create new audits</Th>
                   <Th>Remove all audits</Th>

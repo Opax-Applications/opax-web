@@ -195,11 +195,27 @@ export const domainCreateAllowed = (user, domainName) => {
       return true;
     for (const d of g.permissions.domains) {
       if (d.create) {
-        if (d.name == domainName)
+        if (d.name === domainName)
           return true;
         if (domainName && domainName.endsWith('.' + d.name))
           return true;
       }
+    }
+  }
+  return false;
+};
+
+export const domainAuditCreateAllowed = (group, domainName) => {
+  if (group.permissions.createAllAudits)
+    return true;
+  for (const d of group.permissions.domains) {
+    if (d.create) {
+      console.log(d.name);
+      console.log(domainName);
+      if (d.name === domainName)
+        return true;
+      if (domainName && domainName.endsWith('.' + d.name))
+        return true;
     }
   }
   return false;

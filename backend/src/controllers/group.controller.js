@@ -41,6 +41,7 @@ exports.new_group = async (req, res) => {
     return;
   }
   try {
+    console.log(req.body);
     const group = await GroupModel.create(req.body);
     group.users = [];
     res.json({ success: true, data: group });

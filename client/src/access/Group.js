@@ -57,6 +57,7 @@ class Group extends Component {
       group: {
         _id: this.props.match.params.groupId,
         name: '',
+        apiKey: '',
         permissions: {
           createAllAudits: false,
           readAllAudits: true,
@@ -312,7 +313,7 @@ class Group extends Component {
               {this.breadcrumbs()}
               <Text mt="5" mb="5" isTruncated fontSize="5xl">{this.state.group._id ? "Group: " + this.state.group.name : "New Group"}</Text>
 
-              <Alert mb="5" color={"#fff"} status="warning" 
+              <Alert mb="5" color={"#fff"} status="warning"
  show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
                 {this.state.error}
@@ -321,7 +322,7 @@ class Group extends Component {
             onClose={() => this.setState({ success: null })} tabIndex="0">
                 {this.state.success}
               </Alert>
-              
+
               <Form onSubmit={e => { e.preventDefault(); this.saveGroup(); } } className="form mt-3 border">
                 <Stack spacing={5}>
                   <FormControl id="name">
@@ -329,6 +330,12 @@ class Group extends Component {
                     <Input name="name" type="text"
               value={this.state.group.name} style={{ width:'auto' }}
               required onChange={e => this.handleGroupChange(e)}/>
+                  </FormControl>
+                  <FormControl id="apiKey">
+                    <FormLabel>Group api key</FormLabel>
+                    <Input name="apiKey" type="text" size="50"
+                                  value={this.state.group.apiKey} style={{ width:'auto' }}
+                           onChange={e => this.handleGroupChange(e)}/>
                   </FormControl>
                   <FormControl id="createAllAudits">
                     <Checkbox name="createAllAudits" type="checkbox"
