@@ -183,8 +183,8 @@ class AuditList extends Component {
                 
               </HStack>
               {auditsHTML &&
-          <Box mt="4">
-            <Text fontSize="xl" mb="4">Saved Audits</Text>
+          <Box mt="5">
+            <Text fontSize="xl" mt="5" mb="4">Saved Audits</Text>
 
             <Table colorScheme="whiteAlpha" variant="simple">
               <Thead>

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { LinkContainer } from 'react-router-bootstrap';
 import PropTypes from 'prop-types';
-import { Box, Alert, Flex, Tag, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import { Box, Heading, Alert, Flex, Tag, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
 import {
   Table,
   Thead,
@@ -97,13 +97,15 @@ class Audit extends Component {
         <Flex direction="column" h="100vh">
           <Flex w="100%" maxWidth={1480} mx="auto" px="6">
 
-            <Box w="100%" mb="4">
-              {/* <Breadcrumb>
-            <LinkContainer to="/audits/">
-              <Breadcrumb.Item>Audits</Breadcrumb.Item>
-            </LinkContainer>
-            <Breadcrumb.Item active>Audit</Breadcrumb.Item>
-          </Breadcrumb> */}
+            <Box w="100%" mt="5" mb="0">
+             <Breadcrumb mt="1">
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href={'#'}>Audit</BreadcrumbLink>
+                </BreadcrumbItem>
+              </Breadcrumb>
               <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
                 {this.state.error}
@@ -119,8 +121,8 @@ class Audit extends Component {
 The audit is still running.  <Link to={'/audits/' + this.props.match.params.auditId + '/status'}>See status page</Link>.  </Alert>
             </>
             }
-            <Text fontSize="5xl">Audit Details</Text>
-            <Text fontSize="lg" mb="5" mt="">{this.state.audit.initialDomainName}</Text>
+              <Text fontSize="xl" mt="5" mb="0">Audit Details</Text>
+                <Heading isTruncated fontSize="4xl" mt="0" mb="4">{this.state.audit.initialDomainName}</Heading>
             <SimpleGrid columns={{ base: 1, md: 3 }} spacing={{ base: 5, lg: 8 }}>
 
               {/* <Stat shadow={'xl'}
