@@ -5,7 +5,7 @@ import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
 
 // import Breadcrumb from 'react-bootstrap/Breadcrumb';
 // import Table from 'react-bootstrap/Table';
-import { Box, Flex, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import { Box, Flex, Heading, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
 import {
   Table,
   Thead,
@@ -89,7 +89,7 @@ class Page extends Component {
               <Box w="100%" mb="4">
                 {this.state.page &&
             <>
-              <Breadcrumb>
+              <Breadcrumb mb="5">
                 <BreadcrumbItem>
                   <BreadcrumbLink href="/">Home</BreadcrumbLink>
                 </BreadcrumbItem>
@@ -107,7 +107,9 @@ class Page extends Component {
             </>
                 }
 
-                <Text fontSize="5xl" mb="4">{this.state.page ? <span>{this.state.page.url}</span> : ''}</Text>
+                <Text fontSize="xl" mt="5" mb="0">Results of page audit</Text>
+                <Heading isTruncated fontSize="4xl" mt="0" mb="4">{this.state.page ? <span>{this.state.page.url}</span> : ''}</Heading>
+
                 <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
                   {this.state.error}
