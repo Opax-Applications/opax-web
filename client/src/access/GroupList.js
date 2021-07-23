@@ -1,9 +1,41 @@
 import React, { Component } from 'react';
+import { Box, Flex, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
+import {
+  Table,
+  Thead,
+  Tbody,
+  Tfoot,
+  Tr,
+  Th,
+  Td,
+  TableCaption,
+} from '@chakra-ui/react';
+import { Stack, HStack, VStack } from "@chakra-ui/react";
+import {
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  FormHelperText,
+} from "@chakra-ui/react";
+import {
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
+  StatArrow,
+  StatGroup,
+} from '@chakra-ui/react';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  ModalBody,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 
 import Alert from 'react-bootstrap/Alert';
-import Breadcrumb from 'react-bootstrap/Breadcrumb';
-import Button from 'react-bootstrap/Button';
-import Table from 'react-bootstrap/Table';
 
 import { faTrashAlt, faCheck, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -54,11 +86,15 @@ class GroupList extends Component {
   
   breadcrumbs() {
     return (
-      <Breadcrumb>
-        <LinkContainer to="/">
-          <Breadcrumb.Item>Home</Breadcrumb.Item>
-        </LinkContainer>
-        <Breadcrumb.Item active>Groups</Breadcrumb.Item>
+      <Breadcrumb mb="5">
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/backend">Home</BreadcrumbLink>
+        </BreadcrumbItem>
+
+
+        <BreadcrumbItem isCurrentPage>
+          <BreadcrumbLink href="#">Groups</BreadcrumbLink>
+        </BreadcrumbItem>
       </Breadcrumb>
     );
   }
@@ -72,21 +108,21 @@ class GroupList extends Component {
         : <FontAwesomeIcon icon={faTimes} title="No"/>
       );
     return this.state.groups.map(group => (
-      <tr key={group._id}>
-        <td className="code"><Link to={'/groups/'+group._id}>{group.name}</Link></td>
-        <td className="text-center">{yesNoIcon(group.permissions.readAllAudits)}</td>
-        <td className="text-center">{yesNoIcon(group.permissions.createAllAudits)}</td>
-        <td className="text-center">{yesNoIcon(group.permissions.deleteAllAudits)}</td>
-        <td className="text-center">{yesNoIcon(group.permissions.editUsersAndGroups)}</td>
-        <td className="text-center">{group.permissions.domains.map(d => d.name).join(' ')}</td>
-        <td className="text-right">
+      <Tr key={group._id}>
+        <Td className="code"><Link to={'/groups/'+group._id}>{group.name}</Link></Td>
+        <Td>{yesNoIcon(group.permissions.readAllAudits)}</Td>
+        <Td>{yesNoIcon(group.permissions.createAllAudits)}</Td>
+        <Td>{yesNoIcon(group.permissions.deleteAllAudits)}</Td>
+        <Td>{yesNoIcon(group.permissions.editUsersAndGroups)}</Td>
+        <Td>{group.permissions.domains.map(d => d.name).join(' ')}</Td>
+        <Td className="text-right">
           <Button title="Remove" variant="danger" size="xs"
               onClick={(e) => this.removeGroup(group._id)}
               disabled={group.name === 'Guests' || group.name === 'Superusers'}>
             <FontAwesomeIcon icon={faTrashAlt} title="Remove" />
           </Button>
-        </td>
-      </tr>
+        </Td>
+      </Tr>
     ));
   }
   
@@ -105,36 +141,41 @@ class GroupList extends Component {
     const groupsHTML = this.groupList();
     return (
       <>
-        {this.breadcrumbs()}
-        <h1>Groups</h1>
-        <Alert show={this.state.error != null} variant="danger" dismissible
+        <Flex direction="column" h="100vh">
+          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+            <Box w="100%" mb="4">
+              {this.breadcrumbs()}
+              <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-          {this.state.error}
-        </Alert>
-        <LinkContainer to="/groups/create">
-          <Button>Create a new group</Button>
-        </LinkContainer>
-        {groupsHTML &&
+                {this.state.error}
+              </Alert>
+              <LinkContainer to="/groups/create">
+                <Button colorScheme="pink">Create a new group</Button>
+              </LinkContainer>
+              {groupsHTML &&
           <section>
-            <h2>Groups</h2>
-            <Table bordered size="sm" className="data">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th className="text-center">Read all audits</th>
-                  <th className="text-center">Create new audits</th>
-                  <th className="text-center">Remove all audits</th>
-                  <th className="text-center">Edit users and groups</th>
-                  <th className="text-center">Domains</th>
-                  <th className="text-center"></th>
-                </tr>
-              </thead>
-              <tbody>
+            <Text fontSize="3xl" mt="5" mb="5">Groups</Text>
+            <Table colorScheme="whiteAlpha" variant="simple">
+              <Thead>
+                <Tr>
+                  <Th>Name</Th>
+                  <Th>Read all audits</Th>
+                  <Th>Create new audits</Th>
+                  <Th>Remove all audits</Th>
+                  <Th>Edit users and groups</Th>
+                  <Th>Domains</Th>
+                  <Th></Th>
+                </Tr>
+              </Thead>
+              <Tbody>
                 {groupsHTML}
-              </tbody>
+              </Tbody>
             </Table>
           </section>
-        }
+              }
+            </Box>
+          </Flex>
+        </Flex>
       </>
     );
   }
