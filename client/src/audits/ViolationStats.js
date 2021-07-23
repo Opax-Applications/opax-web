@@ -133,34 +133,34 @@ class ViolationStats extends Component {
     ]);
     return (
       <section>
-      <SimpleGrid mb="5">
-        <Text fontSize="3xl" mt="5" mb="5">Issues</Text>
-        <Table colorScheme="whiteAlpha" variant="simple">
-          <Thead>
-            <Tr>
-              <Th>description</Th>
-              <Th>impact</Th>
-              <Th>total</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            {Object.keys(stats).length === 0 ?
-              <Tr><Td colSpan="3">None</Td></Tr> :
-              <>
-                {Object.keys(stats)
-                  .sort((id1,id2) => {
-                    let td = impacts.get(stats[id2].impact) -
+        <SimpleGrid mb="5">
+          <Text fontSize="3xl" mt="5" mb="5">Issues</Text>
+          <Table colorScheme="whiteAlpha" variant="simple">
+            <Thead>
+              <Tr>
+                <Th>description</Th>
+                <Th>impact</Th>
+                <Th>total</Th>
+              </Tr>
+            </Thead>
+            <Tbody>
+              {Object.keys(stats).length === 0 ?
+                <Tr><Td colSpan="3">None</Td></Tr> :
+                <>
+                  {Object.keys(stats)
+                    .sort((id1,id2) => {
+                      let td = impacts.get(stats[id2].impact) -
                       impacts.get(stats[id1].impact);
-                    if (td === 0)
-                      td = stats[id2].total - stats[id1].total;
-                    return td;
-                  })
-                  .map(id => this.violationRow(id))
-                }
-              </>
-            }
-          </Tbody>
-        </Table>
+                      if (td === 0)
+                        td = stats[id2].total - stats[id1].total;
+                      return td;
+                    })
+                    .map(id => this.violationRow(id))
+                  }
+                </>
+              }
+            </Tbody>
+          </Table>
         </SimpleGrid>
       </section>
     );

@@ -76,19 +76,22 @@ class Domain extends Component {
             <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
 
               <Box w="100%" mb="4">
-                {/* <Breadcrumb>
-            <LinkContainer to="/audits/">
-              <Breadcrumb.Item>Audits</Breadcrumb.Item>
-            </LinkContainer>
-            {this.state.domain &&
+              
+                {this.state.domain &&
             <>
-              <LinkContainer to={'/audits/'+this.state.domain.auditId}>
-                <Breadcrumb.Item>Audit</Breadcrumb.Item>
-              </LinkContainer>
-              <Breadcrumb.Item active>Domain</Breadcrumb.Item>
+              <Breadcrumb>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href={'/audits/'+this.state.domain.auditId}>Audit</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href={'#'}>Domain</BreadcrumbLink>
+                </BreadcrumbItem>
+              </Breadcrumb>
             </>
-            }
-          </Breadcrumb> */}
+                }
                 <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
                   {this.state.error}

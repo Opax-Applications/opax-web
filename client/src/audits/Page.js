@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 import Alert from 'react-bootstrap/Alert';
+import SyntaxHighlighter from 'react-syntax-highlighter';
+import { darcula } from 'react-syntax-highlighter/dist/esm/styles/hljs';
+
 // import Breadcrumb from 'react-bootstrap/Breadcrumb';
 // import Table from 'react-bootstrap/Table';
 import { Box, Flex, SimpleGrid, Breadcrumb, BreadcrumbItem, BreadcrumbLink, Text, Input, Checkbox, NumberInput, PinInput, Radio, Select, Slider, Switch, Textarea, Button, theme } from '@chakra-ui/react';
@@ -84,24 +87,27 @@ class Page extends Component {
             <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
 
               <Box w="100%" mb="4">
-                <Breadcrumb>
-                  <BreadcrumbItem>
-                    <BreadcrumbLink href="/">Home</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  {this.state.page &&
+                {this.state.page &&
             <>
-              <BreadcrumbItem>
-                <BreadcrumbLink href={'/audits/'+this.state.page.auditId}>Audit</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <BreadcrumbLink href={'/domains/'+this.state.page.domainId}>Domain</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem>Page</BreadcrumbItem>
-            </>
-                  }
-                </Breadcrumb>
+              <Breadcrumb>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href="/">Home</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href={'/audits/'+this.state.page.auditId}>Audit</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href={'/domains/'+this.state.page.domainId}>Domain</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                  <BreadcrumbLink href={'#'}>Page</BreadcrumbLink>
+                </BreadcrumbItem>
+              </Breadcrumb>
 
-                              <Text fontSize="5xl" mb="4">{this.state.page ? <span className="code">{this.state.page.url}</span> : ''}</Text>
+            </>
+                }
+
+                <Text fontSize="5xl" mb="4">{this.state.page ? <span>{this.state.page.url}</span> : ''}</Text>
                 <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
                   {this.state.error}
@@ -111,7 +117,7 @@ class Page extends Component {
             <p className="text-center"><a href={this.state.page.url} target="_blank"
               rel="noopener noreferrer"> <Button colorScheme="pink"
           size="lg" mb="5"
-             >
+              >
               Visit page
               </Button></a></p>
             {this.state.page.status && this.state.page.status !== '200' &&
@@ -126,9 +132,9 @@ class Page extends Component {
             {this.state.page.violations
               .sort((v1, v2) => impacts.get(v2.impact) - impacts.get(v1.impact))
               .map(violation => (
-            <Table mt="5" colorScheme="whiteAlpha">
+                <Table mt="5" colorScheme="whiteAlpha">
                   <Tbody>
-                    {/* <tr><th>Id</th><td className="code">{violation.id}</td></tr> */}
+                    {/* <tr><th>Id</th><td>{violation.id}</td></tr> */}
                     <Tr><Th>Description</Th><Td>
                       {violation.description + ' '}
                       <Button variant="info" size="xs" title="Open rule description on Deque's website"
@@ -139,15 +145,16 @@ class Page extends Component {
                     <Tr><Th>Impact</Th><Td className={violation.impact}>{violation.impact}</Td></Tr>
                     <Tr><Th>Category</Th><Td>{violation.category}</Td></Tr>
                     <Tr><Th>Nodes</Th><Td>
-            <Table colorScheme="whiteAlpha">
+                      <Table colorScheme="whiteAlpha">
                         <Thead>
                           <Tr><Th>Target</Th><Th>HTML</Th></Tr>
                         </Thead>
                         <Tbody>
                           {violation.nodes.map(node => (
                             <Tr key={node._id}>
-                              <Td className="code">{node.target}</Td>
-                              <Td className="code">{node.html}</Td>
+                              <Td>{node.target}</Td>
+                              <Td>
+                                <SyntaxHighlighter language="html" style={darcula}>{node.html}</SyntaxHighlighter></Td>
                             </Tr>
                           ))}
                         </Tbody>

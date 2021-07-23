@@ -38,7 +38,7 @@ const PageTable = ({ domain }) => {
     <section>
       <Text fontSize="3xl" mt="5" mb="5">Scanned Pages</Text>
 
-            <Table colorScheme="whiteAlpha" variant="simple">
+      <Table colorScheme="whiteAlpha" variant="simple">
         <Thead>
           <Tr><Th>URL</Th><Th className="text-right">Violations</Th></Tr>
         </Thead>

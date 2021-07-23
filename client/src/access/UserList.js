@@ -87,15 +87,15 @@ class UserList extends Component {
   breadcrumbs() {
     return (
       <Breadcrumb mb="5">
-  <BreadcrumbItem>
-    <BreadcrumbLink href="/backend">Home</BreadcrumbLink>
-  </BreadcrumbItem>
+        <BreadcrumbItem>
+          <BreadcrumbLink href="/backend">Home</BreadcrumbLink>
+        </BreadcrumbItem>
 
 
-  <BreadcrumbItem isCurrentPage>
-    <BreadcrumbLink href="#">Users</BreadcrumbLink>
-  </BreadcrumbItem>
-</Breadcrumb>
+        <BreadcrumbItem isCurrentPage>
+          <BreadcrumbLink href="#">Users</BreadcrumbLink>
+        </BreadcrumbItem>
+      </Breadcrumb>
     );
   }
   
@@ -133,21 +133,21 @@ class UserList extends Component {
     const usersHTML = this.userList();
     return (
       <>
-         <Flex direction="column" h="100vh">
-            <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
+        <Flex direction="column" h="100vh">
+          <Flex w="100%" my="6" maxWidth={1480} mx="auto" px="6">
 
-              <Box w="100%" mb="4">
-        {this.breadcrumbs()}
-        <Alert show={this.state.error != null} variant="danger" dismissible
+            <Box w="100%" mb="4">
+              {this.breadcrumbs()}
+              <Alert show={this.state.error != null} variant="danger" dismissible
             onClose={() => this.setState({ error: null })} tabIndex="0">
-          {this.state.error}
-        </Alert>
-        <LinkContainer to="/users/create">
-          <Button colorScheme="pink" >Create a new user</Button>
-        </LinkContainer>
-        {usersHTML &&
+                {this.state.error}
+              </Alert>
+              <LinkContainer to="/users/create">
+                <Button colorScheme="pink" >Create a new user</Button>
+              </LinkContainer>
+              {usersHTML &&
           <section>
-          <Text fontSize="3xl" mt="5" mb="5">Users</Text>
+            <Text fontSize="3xl" mt="5" mb="5">Users</Text>
             <Table colorScheme="whiteAlpha" variant="simple">
               <Thead>
                 <Tr>
@@ -162,10 +162,10 @@ class UserList extends Component {
               </Tbody>
             </Table>
           </section>
-        }
-          </Box>
+              }
+            </Box>
           </Flex>
-          </Flex>
+        </Flex>
         }
       </>
     );
