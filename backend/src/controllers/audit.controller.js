@@ -3,11 +3,18 @@ import { promisify } from 'util';
 import zlib from 'zlib';
 const ppipe = promisify(pipeline);
 
-import { filterAudits, domainCreateAllowed, domainReadAllowed, domainDeleteAllowed } from '../core/permissions';
+import {
+  filterAudits,
+  domainCreateAllowed,
+  domainReadAllowed,
+  domainDeleteAllowed,
+  domainAuditCreateAllowed
+} from '../core/permissions';
 import Audit from '../core/audit';
 import AuditModel from '../models/audit.model';
 import DomainModel from '../models/domain.model';
 import PageModel from '../models/page.model';
+import GroupModel from '../models/group.model';
 
 let runningAudits = [];
 
@@ -128,6 +135,55 @@ exports.start = async (req, res) => {
     const audit = await newAudit.start({ firstURL, standard, checkSubdomains,
       maxDepth, maxPagesPerDomain, sitemaps, includeMatch, browser, postLoadingDelay });
     res.json({ success: true, data: audit });
+  } catch (err) {
+    res.json({ success: false,
+      error: typeof err == 'string' ? err : err.toString()});
+  }
+};
+
+exports.startWithApiKey = async (req, res) => {
+  const authorizationHeader = req.headers.authorization;
+  if (!authorizationHeader.startsWith("Bearer ")) {
+    res.json({success: false, error: "No authorization token provided"});
+    return;
+  }
+  const apiKey = authorizationHeader.substring(7, authorizationHeader.length);
+  const group = await GroupModel.findByApiKey(apiKey);
+  if (!group) {
+    res.json({status: "No matching group found for an api key"});
+    return;
+  }
+
+  const urlToAudit = req.body.url;
+  const initialDomainName = Audit.extractDomainNameFromURL(urlToAudit);
+  if (!domainAuditCreateAllowed(group, initialDomainName)) {
+    res.json({ success: false, error: "No permission to create this audit." });
+    return;
+  }
+  if (typeof(urlToAudit) != 'string') {
+    res.json({ success: false, error: "Missing or wrong parameter: firstURL" });
+    return;
+  }
+
+  cleanupRunningAudits();
+  const newAudit = new Audit();
+  runningAudits.push(newAudit);
+  try {
+    let domainToAudit;
+    for (const domain of group.permissions.domains) {
+      if (domain.create) {
+        if (domain.name === initialDomainName)
+          domainToAudit = domain;
+        if (initialDomainName && initialDomainName.endsWith('.' + domain.name))
+          domainToAudit = domain;
+      }
+    }
+    const audit = await newAudit.start({
+      firstURL: urlToAudit, standard: domainToAudit.standard ? domainToAudit.standard : 'wcag2a' , checkSubdomains: false,
+      maxDepth: 0, maxPagesPerDomain: 1, sitemaps: false, includeMatch: false, browser: 'chrome',
+      postLoadingDelay: domainToAudit.postLoadingDelay ? domainToAudit.postLoadingDelay : 1000
+    });
+    res.json({success: true, data: audit});
   } catch (err) {
     res.json({ success: false,
       error: typeof err == 'string' ? err : err.toString()});

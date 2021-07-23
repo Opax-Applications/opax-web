@@ -1,6 +1,7 @@
 import { userAndGroupEditAllowed, updateGuestGroup } from '../core/permissions';
 import GroupModel from '../models/group.model';
 import UserGroupModel from '../models/user_group.model';
+import { v4 as uuidv4 } from 'uuid';
 
 exports.get_groups = async (req, res) => {
   if (!userAndGroupEditAllowed(req.user)) {
@@ -41,7 +42,9 @@ exports.new_group = async (req, res) => {
     return;
   }
   try {
-    const group = await GroupModel.create(req.body);
+    const requestBody = req.body;
+    requestBody.apiKey = Buffer.from(uuidv4()).toString('base64');
+    const group = await GroupModel.create(requestBody);
     group.users = [];
     res.json({ success: true, data: group });
   } catch (err) {

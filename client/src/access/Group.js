@@ -57,6 +57,7 @@ class Group extends Component {
       group: {
         _id: this.props.match.params.groupId,
         name: '',
+        apiKey: '',
         permissions: {
           createAllAudits: false,
           readAllAudits: true,
@@ -312,141 +313,179 @@ class Group extends Component {
               {this.breadcrumbs()}
               <Text mt="5" mb="5" isTruncated fontSize="5xl">{this.state.group._id ? "Group: " + this.state.group.name : "New Group"}</Text>
 
-              <Alert mb="5" color={"#fff"} status="warning" 
- show={this.state.error != null} variant="danger" dismissible
-            onClose={() => this.setState({ error: null })} tabIndex="0">
+              <Alert mb="5" color={"#fff"} status="warning"
+                     show={this.state.error != null} variant="danger" dismissible
+                     onClose={() => this.setState({error: null})} tabIndex="0">
                 {this.state.error}
               </Alert>
               <Alert show={this.state.success != null} variant="success" dismissible
-            onClose={() => this.setState({ success: null })} tabIndex="0">
+                     onClose={() => this.setState({success: null})} tabIndex="0">
                 {this.state.success}
               </Alert>
-              
-              <Form onSubmit={e => { e.preventDefault(); this.saveGroup(); } } className="form mt-3 border">
+
+              <Form onSubmit={e => {
+                e.preventDefault();
+                this.saveGroup();
+              }} className="form mt-3 border">
                 <Stack spacing={5}>
                   <FormControl id="name">
                     <FormLabel column sm="5">Group Name</FormLabel>
                     <Input name="name" type="text"
-              value={this.state.group.name} style={{ width:'auto' }}
-              required onChange={e => this.handleGroupChange(e)}/>
+                           value={this.state.group.name} style={{width: 'auto'}}
+                           required onChange={e => this.handleGroupChange(e)}/>
+                  </FormControl>
+                  <FormControl id="apiKey">
+                    <FormLabel>Group api key</FormLabel>
+                    <Input name="apiKey" type="text" size="50"
+                           value={this.state.group.apiKey} style={{width: 'auto'}}
+                           onChange={e => this.handleGroupChange(e)}/>
                   </FormControl>
                   <FormControl id="createAllAudits">
                     <Checkbox name="createAllAudits" type="checkbox"
-              value={this.state.group.permissions.createAllAudits}
-              onChange={e => this.handlePermissionChange(e)}
-              checked={this.state.group.permissions.createAllAudits}>Create any audit</Checkbox>
+                              value={this.state.group.permissions.createAllAudits}
+                              onChange={e => this.handlePermissionChange(e)}
+                              checked={this.state.group.permissions.createAllAudits}>Create any audit</Checkbox>
                   </FormControl>
                   <FormControl id="readAllAudits">
                     <Checkbox name="readAllAudits" type="checkbox"
-              value={this.state.group.permissions.readAllAudits}
-              onChange={e => this.handlePermissionChange(e)}
-              checked={this.state.group.permissions.readAllAudits}
+                              value={this.state.group.permissions.readAllAudits}
+                              onChange={e => this.handlePermissionChange(e)}
+                              checked={this.state.group.permissions.readAllAudits}
                     >Read all audits</Checkbox>
                   </FormControl>
                   <FormControl id="deleteAllAudits">
                     <Checkbox name="deleteAllAudits" type="checkbox"
-              value={this.state.group.permissions.deleteAllAudits}
-              onChange={e => this.handlePermissionChange(e)}
-              checked={this.state.group.permissions.deleteAllAudits}
-              disabled={this.state.group.name === 'Guests'}
+                              value={this.state.group.permissions.deleteAllAudits}
+                              onChange={e => this.handlePermissionChange(e)}
+                              checked={this.state.group.permissions.deleteAllAudits}
+                              disabled={this.state.group.name === 'Guests'}
                     >Delete all audits</Checkbox>
                   </FormControl>
                   <FormControl id="editUsersAndGroups">
                     <Checkbox name="editUsersAndGroups" type="checkbox"
-              value={this.state.group.permissions.editUsersAndGroups}
-              onChange={e => this.handlePermissionChange(e)}
-              checked={this.state.group.permissions.editUsersAndGroups}
-              disabled={this.state.group.name === 'Guests'}
+                              value={this.state.group.permissions.editUsersAndGroups}
+                              onChange={e => this.handlePermissionChange(e)}
+                              checked={this.state.group.permissions.editUsersAndGroups}
+                              disabled={this.state.group.name === 'Guests'}
                     >Edit users and groups</Checkbox>
                   </FormControl>
                   <section>
                     <Text fontSize="3xl" mt="5" mb="0">Domains</Text>
                     {this.state.group.permissions.domains.length > 0 ?
-                      <Table mt="5" id="domains" colorScheme="whiteAlpha" variant="simple">
-                        <Thead>
-                          <Tr><Th id="dname">Domain Name</Th><th>Create</th><th>Read</th><th>Delete</th><th></th></Tr>
-                        </Thead>
-                        <Tbody>
-                          {this.state.group.permissions.domains.map((d, index) =>
-                            <Tr key={index}>
-                              <Td>
-                                <FormControl>
-
-                                  <Input id={`domain_${index}_name`} type="text"
-                         value={d.name} required aria-labelledby="dname"
-                        onChange={e => this.handleDomainChange(e)}/></FormControl>
-                              </Td>
-                              <Td><Checkbox id={`domain_${index}_create`} type="checkbox"
-                        value={d.create} onChange={e => this.handleDomainChange(e)}
-                        checked={d.create} label="Create"/></Td>
-                              <Td><Checkbox id={`domain_${index}_read`} type="checkbox"
-                        value={d.read} onChange={e => this.handleDomainChange(e)}
-                        checked={d.read} label="Read"/></Td>
-                              <Td><Checkbox id={`domain_${index}_delete`} type="checkbox"
-                        value={d.delete} onChange={e => this.handleDomainChange(e)}
-                        checked={d.delete} label="Delete"/></Td>
-                              <Td><Button title="Remove" variant="danger" size="xs"
-                        onClick={(e) => this.removeDomain(index)}>
-                                <FontAwesomeIcon icon={faTrashAlt} title="Remove" />
-                              </Button></Td>
+                        <Table mt="5" id="domains" colorScheme="whiteAlpha" variant="simple">
+                          <Thead>
+                            <Tr><Th id="dname">Domain Name</Th>
+                              <th>Create</th>
+                              <th>Read</th>
+                              <th>Delete</th>
+                              <th>Standard</th>
+                              <th>Post load delay</th>
+                              <th></th>
                             </Tr>
-                          )}
-                        </Tbody>
-                      </Table>
-                      :
-                      <p>No domain-specific rule.</p>
+                          </Thead>
+                          <Tbody>
+                            {this.state.group.permissions.domains.map((d, index) =>
+                                <Tr key={index}>
+                                  <Td>
+                                    <FormControl>
+
+                                      <Input id={`domain_${index}_name`} type="text"
+                                             value={d.name} required aria-labelledby="dname"
+                                             onChange={e => this.handleDomainChange(e)}/></FormControl>
+                                  </Td>
+                                  <Td><Checkbox id={`domain_${index}_create`} type="checkbox"
+                                                value={d.create} onChange={e => this.handleDomainChange(e)}
+                                                checked={d.create} label="Create"/></Td>
+                                  <Td><Checkbox id={`domain_${index}_read`} type="checkbox"
+                                                value={d.read} onChange={e => this.handleDomainChange(e)}
+                                                checked={d.read} label="Read"/></Td>
+                                  <Td><Checkbox id={`domain_${index}_delete`} type="checkbox"
+                                                value={d.delete} onChange={e => this.handleDomainChange(e)}
+                                                checked={d.delete} label="Delete"/></Td>
+                                  <Td>
+                                    <FormControl id={`domain_${index}_standard`}>
+                                      <FormLabel column sm="5">Standard</FormLabel>
+                                      <Select value={d.standard}
+                                              onChange={e => this.handleDomainChange(e)}>
+                                        <option value="wcag2a">WCAG 2.0 Level A</option>
+                                        <option value="wcag2aa">WCAG 2.0 Level AA</option>
+                                        <option value="wcag21aa">WCAG 2.1 Level AA</option>
+                                        <option value="section508">Section 508</option>
+                                      </Select>
+                                    </FormControl>
+                                  </Td>
+                                  <Td>
+                                    <FormControl id={`domain_${index}_postLoadingDelay`}>
+                                      <FormLabel column sm="5">Additional delay to let dynamic pages load (ms)</FormLabel>
+                                      <Input type="number" value={d.postLoadingDelay}
+                                             onChange={e => this.handleDomainChange(e)}/>
+                                    </FormControl>
+                                  </Td>
+                                  <Td><Button title="Remove" variant="danger" size="xs"
+                                              onClick={(e) => this.removeDomain(index)}>
+                                    <FontAwesomeIcon icon={faTrashAlt} title="Remove"/>
+                                  </Button></Td>
+                                </Tr>
+                            )}
+                          </Tbody>
+                        </Table>
+                        :
+                        <p>No domain-specific rule.</p>
                     }
                     <Button colorScheme="pink"
-          size="lg" mt="5" mb="5"
-                onClick={e => this.addDomain()}>
-              Add a domain
+                            size="lg" mt="5" mb="5"
+                            onClick={e => this.addDomain()}>
+                      Add a domain
                     </Button>
                   </section>
                   <div className="text-center">
                     <Button Button mb="5" mr="5" mt="5" colorScheme="pink"
-          size="lg" type="submit">
-              Save
+                            size="lg" type="submit">
+                      Save
                     </Button>
                     {this.state.group._id != null &&
-          <Button mb="5" mt="5" colorScheme="blue"
-          size="md" onClick={(e) => this.removeGroup()}>Remove group</Button>
+                    <Button mb="5" mt="5" colorScheme="blue"
+                            size="md" onClick={(e) => this.removeGroup()}>Remove group</Button>
                     }
                   </div>
                 </Stack>
               </Form>
               {usersHTML &&
-          <section className="border">
-            <Text mt="5" mb="5" isTruncated fontSize="4xl">Users in this group</Text>
-            <Table colorScheme="whiteAlpha" variant="simple">
-              <Thead>
-                <Tr>
-                  <Th>Name</Th>
-                  <Th></Th>
-                </Tr>
-              </Thead>
-              <Tbody>
-                {usersHTML}
-              </Tbody>
-            </Table>
-            {this.state.usersToAdd && this.state.usersToAdd.length > 0 &&
-              <Form onSubmit={e => { e.preventDefault(); this.addUser(); } } inline>
-                <FormControl id="selectedUser">
-                  <FormLabel className="mr-1">Add a user:</FormLabel>
-                  <Input name="selectedUser" as="select" value={this.state.selectedUser}
-                      onChange={e => this.handleChange(e)}>
-                    {this.state.usersToAdd
-                      .map((u) =>
-                        <option key={u._id} value={u._id}>{u.username}</option>
-                      )}
-                  </Input>
-                </FormControl>
-                <Button colorScheme="pink"
-          size="lg" mt="5" mb="5">
-                  Add
-                </Button>
-              </Form>
-            }
-          </section>
+              <section className="border">
+                <Text mt="5" mb="5" isTruncated fontSize="4xl">Users in this group</Text>
+                <Table colorScheme="whiteAlpha" variant="simple">
+                  <Thead>
+                    <Tr>
+                      <Th>Name</Th>
+                      <Th></Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {usersHTML}
+                  </Tbody>
+                </Table>
+                {this.state.usersToAdd && this.state.usersToAdd.length > 0 &&
+                <Form onSubmit={e => {
+                  e.preventDefault();
+                  this.addUser();
+                }} inline>
+                  <FormControl id="selectedUser">
+                    <FormLabel className="mr-1">Add a user:</FormLabel>
+                    <Input name="selectedUser" as="select" value={this.state.selectedUser}
+                           onChange={e => this.handleChange(e)}>
+                      {this.state.usersToAdd
+                          .map((u) =>
+                              <option key={u._id} value={u._id}>{u.username}</option>
+                          )}
+                    </Input>
+                  </FormControl>
+                  <Button colorScheme="pink"
+                          size="lg" mt="5" mb="5">
+                    Add
+                  </Button>
+                </Form>
+                }
+              </section>
               }
             </Box>
           </Flex>

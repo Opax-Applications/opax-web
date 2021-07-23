@@ -7,6 +7,13 @@ const groupSchema = new Schema({
     index: true,
     unique: true,
   },
+  apiKey: {
+    type: String,
+    index: {
+      unique: true,
+      partialFilterExpression: {apiKey: {$type: "string"}}
+    }
+  },
   permissions: {
     createAllAudits: Boolean,
     readAllAudits: Boolean,
@@ -14,6 +21,8 @@ const groupSchema = new Schema({
     editUsersAndGroups: Boolean,
     domains: [{
       name: String,
+      standard: String,
+      postLoadingDelay: Number,
       read: Boolean,
       delete: Boolean,
       create: Boolean,
@@ -58,10 +67,24 @@ groupSchema.statics.findById = async function(id) {
   const groups = await this.aggregate([
     { $match: { _id: mongoose.Types.ObjectId(id) } },
     { $lookup: userLookup },
-    { $project: { name: 1, permissions: 1, users: 1 } },
+    { $project: { name: 1, apiKey: 1, permissions: 1, users: 1 } },
   ]).exec();
   if (groups.length == 1)
     return groups[0];
+  return null;
+};
+
+groupSchema.statics.findByApiKey = async function(apiKey) {
+  if (!apiKey) {
+    return null;
+  }
+  const groups = await this.aggregate([
+    { $match: { apiKey: apiKey } },
+    { $project: { name: 1, apiKey: 1, permissions: 1} },
+  ]).exec();
+  if (groups.length == 1)
+    return groups[0];
+
   return null;
 };
 
