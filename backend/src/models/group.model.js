@@ -21,6 +21,8 @@ const groupSchema = new Schema({
     editUsersAndGroups: Boolean,
     domains: [{
       name: String,
+      standard: String,
+      postLoadingDelay: Number,
       read: Boolean,
       delete: Boolean,
       create: Boolean,

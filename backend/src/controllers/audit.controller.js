@@ -142,16 +142,19 @@ exports.start = async (req, res) => {
 };
 
 exports.startWithApiKey = async (req, res) => {
-  console.log("start with api key");
-  const { apiKey } = req.params;
-  console.log(apiKey);
-  const urlToAudit = req.body.url;
+  const authorizationHeader = req.headers.authorization;
+  if (!authorizationHeader.startsWith("Bearer ")) {
+    res.json({success: false, error: "No authorization token provided"});
+    return;
+  }
+  const apiKey = authorizationHeader.substring(7, authorizationHeader.length);
   const group = await GroupModel.findByApiKey(apiKey);
   if (!group) {
-    res.json({status: "No matching group found for api key"});
+    res.json({status: "No matching group found for an api key"});
     return;
   }
 
+  const urlToAudit = req.body.url;
   const initialDomainName = Audit.extractDomainNameFromURL(urlToAudit);
   if (!domainAuditCreateAllowed(group, initialDomainName)) {
     res.json({ success: false, error: "No permission to create this audit." });
