@@ -84,6 +84,7 @@ groupSchema.statics.findByApiKey = async function(apiKey) {
   ]).exec();
   if (groups.length == 1)
     return groups[0];
+
   return null;
 };
 

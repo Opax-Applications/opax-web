@@ -169,9 +169,19 @@ exports.startWithApiKey = async (req, res) => {
   const newAudit = new Audit();
   runningAudits.push(newAudit);
   try {
+    let domainToAudit;
+    for (const domain of group.permissions.domains) {
+      if (domain.create) {
+        if (domain.name === initialDomainName)
+          domainToAudit = domain;
+        if (initialDomainName && initialDomainName.endsWith('.' + domain.name))
+          domainToAudit = domain;
+      }
+    }
     const audit = await newAudit.start({
-      firstURL: urlToAudit, standard: "wcag2a", checkSubdomains: false,
-      maxDepth: 0, maxPagesPerDomain: 1, sitemaps: false, includeMatch: false, browser: 'chrome', postLoadingDelay: 500
+      firstURL: urlToAudit, standard: domainToAudit.standard ? domainToAudit.standard : 'wcag2a' , checkSubdomains: false,
+      maxDepth: 0, maxPagesPerDomain: 1, sitemaps: false, includeMatch: false, browser: 'chrome',
+      postLoadingDelay: domainToAudit.postLoadingDelay ? domainToAudit.postLoadingDelay : 1000
     });
     res.json({success: true, data: audit});
   } catch (err) {

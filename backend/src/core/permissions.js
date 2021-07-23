@@ -210,8 +210,6 @@ export const domainAuditCreateAllowed = (group, domainName) => {
     return true;
   for (const d of group.permissions.domains) {
     if (d.create) {
-      console.log(d.name);
-      console.log(domainName);
       if (d.name === domainName)
         return true;
       if (domainName && domainName.endsWith('.' + d.name))
