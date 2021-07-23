@@ -1,14 +1,14 @@
 .critical {
-  color: #C00;
+  color: #ff4242;
 }
 .serious {
-  color: #A30;
+  color: #fff35f;
 }
 .moderate {
-  color: #940;
+  color: #f287ff;
 }
 .minor {
-  color: #740;
+  color: #71ff6f;
 }
 .violationItems {
   margin-left: 1em;

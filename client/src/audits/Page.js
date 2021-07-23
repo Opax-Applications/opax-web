@@ -139,7 +139,7 @@ class Page extends Component {
                     <Tr><Th>Impact</Th><Td className={violation.impact}>{violation.impact}</Td></Tr>
                     <Tr><Th>Category</Th><Td>{violation.category}</Td></Tr>
                     <Tr><Th>Nodes</Th><Td>
-                      <Table bordered size="sm" className="data">
+            <Table colorScheme="whiteAlpha">
                         <Thead>
                           <Tr><Th>Target</Th><Th>HTML</Th></Tr>
                         </Thead>

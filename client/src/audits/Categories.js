@@ -110,10 +110,10 @@ class Categories extends Component {
     ];
     return (
       <section>
-        <Text fontSize="3xl" mt="5" mb="5">Scanned Pages</Text>
+        <Text fontSize="3xl" mt="5" mb="5">Issue types</Text>
 
-        <div style={{ display:'flex', flexWrap:'wrap-reverse' }}>
-          <SimpleGrid columns={2} spacing={10}>
+        <div>
+          <SimpleGrid columns={2} spacing={10} mb="5" mt="5">
 
             <Table colorScheme="whiteAlpha" variant="simple">
               <Thead>
@@ -124,16 +124,15 @@ class Categories extends Component {
               </Thead>
               <Tbody>
                 {data.map(
-                  cat => <tr key={cat.name}>
+                  cat => <Tr key={cat.name}>
                     <Td>{cat.name}</Td>
                     <Td isNumeric>{cat.count}</Td>
-                  </tr>
+                  </Tr>
                 )}
               </Tbody>
             </Table>
             <PieChart
             viewBoxSize={[580, 270]}
-            style={{ 'width':'580px', 'height':'270px' }}
             data={data.map(
               (cat, index) => ({
                 title: cat.name,
@@ -145,7 +144,7 @@ class Categories extends Component {
             label={({ dataEntry }) =>
               dataEntry.title + ": " + dataEntry.value + "%"}
             labelStyle={{
-              fontSize: '13px',
+              fontSize: '15px',
               fontFamily: 'sans-serif',
               fill: '#eee',
             }}

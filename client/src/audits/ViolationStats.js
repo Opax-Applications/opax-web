@@ -133,7 +133,8 @@ class ViolationStats extends Component {
     ]);
     return (
       <section>
-        <Text fontSize="3xl" mt="5"mb="5">Issues</Text>
+      <SimpleGrid mb="5">
+        <Text fontSize="3xl" mt="5" mb="5">Issues</Text>
         <Table colorScheme="whiteAlpha" variant="simple">
           <Thead>
             <Tr>
@@ -160,6 +161,7 @@ class ViolationStats extends Component {
             }
           </Tbody>
         </Table>
+        </SimpleGrid>
       </section>
     );
   }
