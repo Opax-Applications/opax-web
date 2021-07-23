@@ -101,13 +101,13 @@ class Login extends Component {
         {(this.props.permissions && this.props.permissions.loggedIn()) ?
           <>
             <Button colorScheme="pink"
-          size="lg" variant="secondary" onClick={() => this.logout()} className="float-right">
+         variant="secondary" onClick={() => this.logout()} className="float-right">
               Log out
             </Button>
           </>
           :
           <Button colorScheme="pink"
-          size="lg" onClick={() => this.login()}
+          variant="secondary" onClick={() => this.login()}
               className="float-right">
             Login
           </Button>

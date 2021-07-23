@@ -81,7 +81,10 @@ class App extends Component {
   render() {
     return (
       <Router history={this.history}>
-        <Header/>
+        <Header server={this.server}
+                  permissions={this.state.permissions}
+                  localLogin={(username, password) => this.localLogin(username, password)}
+                  logout={() => this.logout()} />
         <main>
           { this.state.permissions == null ?
             this.state.displayLoading && <p>Loading permissions...</p>

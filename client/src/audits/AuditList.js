@@ -180,8 +180,7 @@ class AuditList extends Component {
             </LinkContainer>
           </>
                 }
-                <Login server={this.props.server} permissions={this.props.permissions}
-          localLogin={(u,p) => this.localLogin(u,p)} logout={() => this.logout()}/>
+                
               </HStack>
               {auditsHTML &&
           <Box mt="4">

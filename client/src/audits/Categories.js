@@ -147,7 +147,7 @@ class Categories extends Component {
             labelStyle={{
               fontSize: '13px',
               fontFamily: 'sans-serif',
-              fill: 'black',
+              fill: '#eee',
             }}
             radius={100}
             center={[290,135]}

@@ -1,8 +1,18 @@
 import React from 'react';
-import { Flex, Icon, Input, IconButton, useBreakpointValue } from '@chakra-ui/react';
+import { Flex, Link, Icon, Input, IconButton, useBreakpointValue } from '@chakra-ui/react';
+import Login from './access/Login';
 
-const Header = () => {
+const Header = (props) => {
 
+  const logout = async () => {
+    await props.logout();
+  };
+
+  const localLogin = async (username, password) => {
+    await props.localLogin(username, password);
+  };
+
+  
   const isWideVersion = useBreakpointValue({
     base: false,
     lg: true,
@@ -36,15 +46,8 @@ const Header = () => {
       bg="gray.800"
       borderRadius="full"
         >
-          <Input
-        color="gray.50"
-        variant="unstyled"
-        px="4"
-        mr="4"
-        placeholder="Search..."
-        _placeholder={{ color: 'gray.400' }}
-          />
-
+<Login server={props.server} permissions={props.permissions}
+          localLogin={(u,p) => localLogin(u,p)} logout={() => logout()}/>         
         </Flex>
       </Flex>
     </Flex>
