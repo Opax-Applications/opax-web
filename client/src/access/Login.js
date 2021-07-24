@@ -116,36 +116,41 @@ class Login extends Component {
           <>
 
             <Modal isOpen={this.state.displayForm} onClose={() => this.hideForm()}>
-              <ModalOverlay />
+              <ModalOverlay/>
               <ModalContent shadow={'xl'}
-              px={{ base: 2, md: 4 }}
-              background={'#1F2029'}
-      py={'5'}
-      border={'1px solid #222'}
-      rounded={'lg'}>
-                <Form onSubmit={(e) => { e.preventDefault(); this.localLogin(); }}>
+                            px={{base: 2, md: 4}}
+                            background={'#1F2029'}
+                            py={'5'}
+                            border={'1px solid #222'}
+                            rounded={'lg'}>
+                <Form onSubmit={(e) => {
+                  e.preventDefault();
+                  this.localLogin();
+                }}>
 
                   <ModalHeader>Sign in</ModalHeader>
-                  <ModalCloseButton />
+                  <ModalCloseButton/>
                   <ModalBody>
-<Stack spacing={5}>
+                    <Stack spacing={5}>
 
-                    <FormControl id="firstURL">
-                      <FormLabel column sm="5">Username</FormLabel>
-                      <Input name="username" type="text" onChange={e => this.handleChange(e)} onChange={e => this.handleChange(e)}/>
-                    </FormControl>
-                     <FormControl id="firstURL">
-                      <FormLabel column sm="5">Username</FormLabel>
-                      <Input name="password" type="password" onChange={e => this.handleChange(e)} onChange={e => this.handleChange(e)}/>
-                    </FormControl>
+                      <FormControl id="username">
+                        <FormLabel column sm="5">Username</FormLabel>
+                        <Input autoFocus name="username" type="text" onChange={e => this.handleChange(e)}
+                               onChange={e => this.handleChange(e)}/>
+                      </FormControl>
+                      <FormControl id="firstURL">
+                        <FormLabel column sm="5">Password</FormLabel>
+                        <Input name="password" type="password" onChange={e => this.handleChange(e)}
+                               onChange={e => this.handleChange(e)}/>
+                      </FormControl>
                     </Stack>
                   </ModalBody>
 
                   <ModalFooter>
                     <Button colorScheme="grey" mr={3} onClick={() => this.hideForm()}>
-              Close
+                      Close
                     </Button>
-                    <Button colorScheme="pink" type="submit" >Log in</Button>
+                    <Button colorScheme="pink" type="submit">Log in</Button>
 
                   </ModalFooter>
                 </Form>
