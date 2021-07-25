@@ -1,7 +1,9 @@
 import mongoose from 'mongoose';
+
 const Schema = mongoose.Schema;
 
 const AuditsSchema = new Schema({
+  domainId: {type: Schema.Types.ObjectId, ref: 'Domain', index: true},
   firstURL: String,
   standard: String,
   checkSubdomains: Boolean,
@@ -24,8 +26,8 @@ const AuditsSchema = new Schema({
       descLink: String,
       impact: String,
       total: Number,
-      domains: [{
-        id: { type: Schema.Types.ObjectId, ref: 'Domain' },
+      pages: [{
+        id: {type: Schema.Types.ObjectId, ref: 'Page'},
         count: Number,
       }],
     },
@@ -37,15 +39,9 @@ const AuditsSchema = new Schema({
     default: {},
   },
   complete: Boolean,
-}, { timestamps: true });
+}, {timestamps: true});
 
-AuditsSchema.virtual('domains', {
-  ref: 'Domain',
-  localField: '_id',
-  foreignField: 'auditId'
-});
-
-AuditsSchema.set('toObject', { virtuals: true });
-AuditsSchema.set('toJSON', { virtuals: true });
+AuditsSchema.set('toObject', {virtuals: true});
+AuditsSchema.set('toJSON', {virtuals: true});
 
 export default mongoose.model('Audit', AuditsSchema);
