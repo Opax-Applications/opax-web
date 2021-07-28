@@ -8,18 +8,11 @@ export default class Domain {
   
   /**
    * Domain constructor.
-   * @param {Audit} audit
    * @param {string} name - domain name
    */
-  constructor(audit, name) {
-    /** @member {Audit} */
-    this.audit = audit;
+  constructor(name) {
     /** @member {string} - domain name */
     this.name = name;
-    /** @member {DomainModel} - database object for this domain */
-    this.dbObject = null;
-    /** @member {Number} */
-    this.pageCount = 0;
   }
   
   /**
@@ -28,12 +21,7 @@ export default class Domain {
    */
   saveNew() {
     const domain = new DomainModel({
-      auditId: this.audit.dbObject._id,
-      name: this.name,
-      nbCheckedURLs: 0,
-      nbViolations: 0,
-      violationStats: {},
-      categories: {},
+      name: this.name
     });
     return domain.save()
       .then((domainObject) => this.dbObject = domainObject)

@@ -381,29 +381,30 @@ export default class Audit {
    */
   async findDomain(domainName, originPage) {
     for (const domain of this.domains)
-      if (domain.name == domainName)
+      if (domain.name === domainName)
         return domain;
-    const domain = new Domain(this, domainName);
-    this.domains.push(domain);
-    await domain.saveNew();
-    if (this.params.sitemaps) {
-      await domain.readSitemap()
-        .then((sitemap) => {
-          if (!sitemap.urlset)
-            return;
-          const sitemapPage = this.newPage(originPage, domain, domain.sitemapURL(), 200);
-          for (const url of sitemap.urlset.url) {
-            if (!url.loc || !url.loc.length)
-              continue;
-            this.testToAddPage(sitemapPage, url.loc[0]);
-          }
-        })
-        .catch(err => {
-          console.log("Error reading the site map:");
-          console.log(err);
-        });
-    }
-    return domain;
+    return null;
+    // const domain = new Domain(this, domainName);
+    // this.domains.push(domain);
+    // await domain.saveNew();
+    // if (this.params.sitemaps) {
+    //   await domain.readSitemap()
+    //     .then((sitemap) => {
+    //       if (!sitemap.urlset)
+    //         return;
+    //       const sitemapPage = this.newPage(originPage, domain, domain.sitemapURL(), 200);
+    //       for (const url of sitemap.urlset.url) {
+    //         if (!url.loc || !url.loc.length)
+    //           continue;
+    //         this.testToAddPage(sitemapPage, url.loc[0]);
+    //       }
+    //     })
+    //     .catch(err => {
+    //       console.log("Error reading the site map:");
+    //       console.log(err);
+    //     });
+    // }
+    // return domain;
   }
   
   /**
@@ -561,8 +562,8 @@ export default class Audit {
       return;
     }
     this.findDomain(domainName, originPage).then((domain) => {
-      if (this.params.maxPagesPerDomain == 0 ||
-          domain.pageCount < this.params.maxPagesPerDomain) {
+      if (domain && (this.params.maxPagesPerDomain == 0 ||
+          domain.pageCount < this.params.maxPagesPerDomain)) {
         const page = this.newPage(originPage, domain, url,
           sslError ? null : res.status);
         if (sslError)
