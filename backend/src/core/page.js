@@ -81,7 +81,7 @@ export default class Page {
         const nodes = [];
         for (const node of violation.nodes) {
           nodes.push({
-            target: node.target[0],
+            target: node.target.flat().join(),
             html: node.html
           });
         }
