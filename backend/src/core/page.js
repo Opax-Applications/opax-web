@@ -6,22 +6,17 @@ export default class Page {
    * Page constructor.
    * @param {Audit} audit
    * @param {string} url
-   * @param {number} depth - the current crawl depth
    * @param {Number} status - status returned by the HEAD request
    */
-  constructor(audit, url, depth, status) {
+  constructor(audit, url, status) {
     /** @member {Audit} */
     this.audit = audit;
     /** @member {string} */
     this.url = url;
-    /** @member {number} */
-    this.depth = depth;
     /** @member {Number} */
     this.status = status;
     /** @member {string} */
     this.errorMessage = null;
-    /** @member {number} - total number of violations found in the page */
-    this.nbViolations = 0;
     /** @member {Array.<Object>} - (id, descLink, description, impact, nodes) */
     this.violations = [];
     /** @member {PageModel} - database object for this page */
@@ -73,7 +68,6 @@ export default class Page {
   aXeResults(results) {
     if (results != null) {
       const violations = results.violations;
-      this.nbViolations = 0;
       for (const violation of violations) {
         const nodes = [];
         for (const node of violation.nodes) {
@@ -99,7 +93,6 @@ export default class Page {
           nodes: nodes,
           category: category,
         });
-        this.nbViolations += nodes.length;
       }
     }
     this.saveAndContinue();

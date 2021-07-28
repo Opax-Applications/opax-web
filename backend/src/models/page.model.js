@@ -10,19 +10,7 @@ const PagesSchema = new Schema({
         unique: true,
     },
     status: String,
-    errorMessage: String,
-    nbViolations: Number,
-    violations: [{
-        id: String,
-        description: String,
-        descLink: String,
-        impact: String,
-        nodes: [{
-            target: String,
-            html: String
-        }],
-        category: String
-    }],
+    errorMessage: String
 }, {timestamps: true});
 
 export default mongoose.model('Page', PagesSchema);

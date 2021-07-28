@@ -9,6 +9,8 @@ import AbortController from 'abort-controller';
 import Page from './page';
 import Domain from './domain';
 import AuditModel from '../models/audit.model';
+import SiteAuditModel from '../models/siteAudit.model';
+
 
 const pageLoadTimeout = 60000;
 const headTimeout = 4000;
@@ -48,7 +50,7 @@ export default class Audit {
     /** @member {Array.<string>} - URLs that have been analyzed with aXe */
     this.checkedURLs = [];
     /** @member {AuditModel} - database object for this audit */
-    this.dbObject = null;
+    this.siteAuditDbObject = null;
     /** @member {boolean} - true when there are HEAD tests being performed
       (there is an async queue for that) */
     this.headTestsRunning = false;
@@ -93,16 +95,16 @@ export default class Audit {
    * @param {string} params.includeMatch - regular expression to include only matching paths
    * @param {string} params.browser - web browser name (firefox|chrome)
    * @param {number} params.postLoadingDelay - additional delay to let dynamic pages load (ms)
-   * @returns {Promise<Object>} - this.dbObject (database object for this audit)
+   * @returns {Promise<Object>} - this.siteAuditDbObject (database object for this audit)
    */
-  async start(params) {
+  async startSiteAudit(params) {
     this.params = params;
     this.initialDomainName = Audit.extractDomainNameFromURL(params.firstURL);
     if (this.initialDomainName == null)
       throw new Error("No initial domain name");
     this.running = true;
     this.testedURLs = [params.firstURL];
-    const audit = new AuditModel({
+    const siteAuditModel = new SiteAuditModel({
       ...params,
       dateStarted: new Date(),
       nbCheckedURLs: 0,
@@ -112,7 +114,7 @@ export default class Audit {
       complete: false,
     });
     try {
-      this.dbObject = await audit.save();
+      this.siteAuditDbObject = await siteAuditModel.save();
     } catch (error) {
       console.log("Error saving the audit:");
       console.log(error);
@@ -133,7 +135,7 @@ export default class Audit {
     ];
     initialDomain.pageCount++;
     this.nextURL();
-    return this.dbObject;
+    return this.siteAuditDbObject;
   }
   
   /**
@@ -239,18 +241,18 @@ export default class Audit {
     for (const violation of page.violations) {
       this.nbViolations += violation.nodes.length;
       this.updateStats('domain', domainObject, page, violation);
-      this.updateStats('audit', this.dbObject, page, violation);
+      this.updateStats('audit', this.siteAuditDbObject, page, violation);
     }
     this.checkedURLs.push(page.url);
-    this.dbObject.nbCheckedURLs = this.checkedURLs.length;
+    this.siteAuditDbObject.nbCheckedURLs = this.checkedURLs.length;
     if (page.errorMessage != null)
-      this.dbObject.nbScanErrors++;
+      this.siteAuditDbObject.nbScanErrors++;
     domainObject.save()
       .catch((err) => {
         console.log("Error saving the domain:");
         console.log(err);
       })
-      .then(() => this.dbObject.save())
+      .then(() => this.siteAuditDbObject.save())
       .catch((err) => {
         console.log("Error saving the audit:");
         console.log(err);
@@ -274,10 +276,10 @@ export default class Audit {
   updateStats(objectType, object, page, violation) {
     const violationCount = violation.nodes.length;
     let subs, subObj;
-    if (objectType == 'domain') {
+    if (objectType === 'domain') {
       subs = 'pages';
       subObj = page.dbObject;
-    } else if (objectType == 'audit') {
+    } else if (objectType === 'audit') {
       subs = 'domains';
       subObj = page.domain.dbObject;
     }
@@ -331,9 +333,9 @@ export default class Audit {
    */
   async endAudit() {
     console.log("endAudit");
-    this.dbObject.complete = this.pagesToCheck.length == 0 && this.headToDo.length == 0;
-    this.dbObject.dateEnded = new Date();
-    await Promise.all([this.driver.quit(), this.dbObject.save()]);
+    this.siteAuditDbObject.complete = this.pagesToCheck.length === 0 && this.headToDo.length === 0;
+    this.siteAuditDbObject.dateEnded = new Date();
+    await Promise.all([this.driver.quit(), this.siteAuditDbObject.save()]);
     this.driver = null;
     this.running = false;
   }
@@ -346,7 +348,7 @@ export default class Audit {
    */
   static extractDomainNameFromURL(url) {
     // the URL must be absolute
-    if (url.indexOf('//') == -1)
+    if (url.indexOf('//') === -1)
       return null;
     //const link = document.createElement('a');
     //link.href = url;
@@ -445,7 +447,7 @@ export default class Audit {
   testToAddPage(originPage, url) {
     if (!/^https?:\/\//i.test(url))
       return;
-    if (this.params.includeMatch != null && this.params.includeMatch != '') {
+    if (this.params.includeMatch != null && this.params.includeMatch !== '') {
       const path = url.replace(/^https?:\/\/[^/]+/i, '');
       if (!path.match(this.params.includeMatch))
         return;
@@ -465,8 +467,8 @@ export default class Audit {
       if (domainName !== this.initialDomainName)
         return;
     } else {
-      if (domainName.indexOf(this.initialDomainName) == -1 ||
-          domainName.indexOf(this.initialDomainName) !=
+      if (domainName.indexOf(this.initialDomainName) === -1 ||
+          domainName.indexOf(this.initialDomainName) !==
           domainName.length - this.initialDomainName.length)
         return;
     }
@@ -585,7 +587,7 @@ export default class Audit {
       nbViolations: this.nbViolations,
       nbCheckedURLs: this.checkedURLs.length,
       nbURLsToCheck: this.pagesToCheck.length,
-      nbScanErrors: this.dbObject ? this.dbObject.nbScanErrors : 0,
+      nbScanErrors: this.siteAuditDbObject ? this.siteAuditDbObject.nbScanErrors : 0,
     };
   }
   

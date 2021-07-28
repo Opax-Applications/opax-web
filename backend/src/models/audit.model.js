@@ -2,48 +2,28 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const AuditsSchema = new Schema({
+    pageId: {type: Schema.Types.ObjectId, ref: 'Page', index: true},
     firstURL: String,
+    initialDomainName: String,
     standard: String,
-    checkSubdomains: Boolean,
-    maxDepth: Number,
-    maxPagesPerDomain: Number,
-    sitemaps: Boolean,
-    includeMatch: String,
     browser: String,
     postLoadingDelay: Number,
     dateStarted: Date,
     dateEnded: Date,
-    nbCheckedURLs: Number,
-    nbViolations: Number,
     nbScanErrors: Number,
-    initialDomainName: String,
-    violationStats: { // the key is the violation id
-        type: Map,
-        of: {
-            description: String,
-            descLink: String,
-            impact: String,
-            total: Number,
-            domains: [{
-                id: { type: Schema.Types.ObjectId, ref: 'Domain' },
-                count: Number,
-            }],
-        },
-        default: {},
-    },
-    categories: { // the key is the category name, the value is the count
-        type: Map,
-        of: Number,
-        default: {},
-    },
+    violations: [{
+        id: String,
+        description: String,
+        descLink: String,
+        impact: String,
+        nodes: [{
+            target: String,
+            html: String
+        }],
+        category: String
+    }],
     complete: Boolean,
 }, { timestamps: true });
-
-AuditsSchema.virtual('domains', {
-    ref: 'Domain',
-    localField: '_id',
-    foreignField: 'auditId'
-});
 
 AuditsSchema.set('toObject', { virtuals: true });
 AuditsSchema.set('toJSON', { virtuals: true });
