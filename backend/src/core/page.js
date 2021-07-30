@@ -48,18 +48,18 @@ export default class Page {
   contentLoaded() {
     console.log("contentLoaded");
     this.audit.extractLinks(this)
-      .then(() => {
-        console.log("aXe analyze");
-        this.audit.aXeB.run((err, results) => {
-          if (err) {
-            console.log("aXe analyze error for " + this.url + ":");
-            console.log(err);
-            if (this.errorMessage == null)
-              this.errorMessage = err;
-          }
-          this.aXeResults(results);
+        .then(() => {
+          console.log("aXe analyze");
+          this.audit.aXeB.run((err, results) => {
+            if (err) {
+              console.log("aXe analyze error for " + this.url + ":");
+              console.log(err);
+              if (this.errorMessage == null)
+                this.errorMessage = err;
+            }
+            this.aXeResults(results);
+          });
         });
-      });
   }
 
   /**
