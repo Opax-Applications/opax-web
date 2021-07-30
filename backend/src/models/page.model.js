@@ -9,8 +9,7 @@ const PagesSchema = new Schema({
         index: true,
         unique: true,
     },
-    status: String,
-    errorMessage: String
+    status: String
 }, {timestamps: true});
 
 export default mongoose.model('Page', PagesSchema);

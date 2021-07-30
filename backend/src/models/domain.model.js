@@ -7,7 +7,8 @@ const DomainsSchema = new Schema({
     type: String,
     index: true,
     unique: true,
-  }
+  },
+  groupId: {type: Schema.Types.ObjectId, ref: 'Group', index: true}
 }, {timestamps: true});
 
 DomainsSchema.set('toObject', {virtuals: true});

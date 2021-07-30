@@ -1,24 +1,26 @@
 import PageModel from '../models/page.model';
+import PageAudit from "../models/pageAudit.model";
 
 export default class Page {
 
   /**
    * Page constructor.
    * @param {Audit} audit
+   * @param {Domain} domain
    * @param {string} url
    * @param {Number} status - status returned by the HEAD request
    */
-  constructor(audit, url, status) {
+  constructor(audit, domain, url, status) {
     /** @member {Audit} */
     this.audit = audit;
+    /** @member {Domain} */
+    this.domain = domain;
     /** @member {string} */
     this.url = url;
     /** @member {Number} */
     this.status = status;
     /** @member {string} */
     this.errorMessage = null;
-    /** @member {Array.<Object>} - (id, descLink, description, impact, nodes) */
-    this.violations = [];
     /** @member {PageModel} - database object for this page */
     this.dbObject = null;
   }
@@ -35,7 +37,7 @@ export default class Page {
         await new Promise(resolve => setTimeout(resolve, delay));
       this.contentLoaded();
     } catch (error) {
-      this.handleError(error);
+      await this.handleError(error);
     }
   }
 
@@ -48,7 +50,7 @@ export default class Page {
     this.audit.extractLinks(this)
       .then(() => {
         console.log("aXe analyze");
-        this.audit.aXeB.analyze((err, results) => {
+        this.audit.aXeB.run((err, results) => {
           if (err) {
             console.log("aXe analyze error for " + this.url + ":");
             console.log(err);
@@ -66,36 +68,53 @@ export default class Page {
    * @param {Object} results
    */
   aXeResults(results) {
-    if (results != null) {
-      const violations = results.violations;
-      for (const violation of violations) {
-        const nodes = [];
-        for (const node of violation.nodes) {
-          nodes.push({
-            target: node.target.flat().join(),
-            html: node.html
-          });
-        }
-        let category = null;
-        if (violation.tags instanceof Array) {
-          for (const t of violation.tags) {
-            if (t.indexOf('cat.') == 0) {
-              category = t.substring(4);
-              break;
+    this.save().then(() => {
+      let violations = [];
+      let nbViolations = 0;
+
+      if (results != null) {
+        const violationsFromResult = results.violations;
+        for (const violation of violationsFromResult) {
+          const nodes = [];
+          for (const node of violation.nodes) {
+            nodes.push({
+              target: node.target.flat().join(),
+              html: node.html
+            });
+          }
+          let category = null;
+          if (violation.tags instanceof Array) {
+            for (const t of violation.tags) {
+              if (t.indexOf('cat.') === 0) {
+                category = t.substring(4);
+                break;
+              }
             }
           }
+          violations.push({
+            id: violation.id,
+            descLink: violation.helpUrl,
+            description: violation.description,
+            impact: violation.impact,
+            nodes: nodes,
+            category: category,
+          });
+          nbViolations += nodes.length;
         }
-        this.violations.push({
-          id: violation.id,
-          descLink: violation.helpUrl,
-          description: violation.description,
-          impact: violation.impact,
-          nodes: nodes,
-          category: category,
-        });
       }
-    }
-    this.saveAndContinue();
+      const pageAudit = new PageAudit({
+        ...params,
+        pageId: this.dbObject._id,
+        errorMessage: this.errorMessage,
+        dateEnded: new Date(),
+        nbViolations: nbViolations,
+        violations: violations,
+        complete: true
+      });
+      return pageAudit.save();
+    }).then(() => {
+      this.audit.continueAudit(this);
+    });
   }
 
   /**
@@ -107,32 +126,23 @@ export default class Page {
     console.log(error);
     this.errorMessage = error.message;
     // name = NoSuchSessionError, message = Tried to run command without establishing a connection
-    if (error.name.indexOf('NoSuchSessionError') == 0 ||
-        error.name.indexOf('TimeoutError') == 0 ||
-        error.name.indexOf('WebDriverError') == 0)
+    if (error.name.indexOf('NoSuchSessionError') === 0 ||
+        error.name.indexOf('TimeoutError') === 0 ||
+        error.name.indexOf('WebDriverError') === 0)
       await this.audit.createNewDriver();
-    this.saveAndContinue();
+    await this.save().then(()=>{this.audit.continueAudit(this)});
   }
 
   /**
    * Save the page in the database and call audit.continueAudit().
    */
-  saveAndContinue() {
+  save() {
     const page = new PageModel({
-      auditId: this.audit.dbObject._id,
+      domainId: this.domain.dbObject._id,
       url: this.url,
       status: this.status,
-      errorMessage: this.errorMessage,
-      nbViolations: this.nbViolations,
-      violations: this.violations,
+      errorMessage: this.errorMessage
     });
-    page.save()
-      .then((pageObject) => this.dbObject = pageObject)
-      .catch((err) => {
-        console.log("Error saving the page:");
-        console.log(err);
-      })
-      .finally(() => this.audit.continueAudit(this));
+    return page.save().then((pageObject) => this.dbObject = pageObject);
   }
-
 }

@@ -100,8 +100,13 @@ export default class Audit {
   async startSiteAudit(params) {
     this.params = params;
     this.initialDomainName = Audit.extractDomainNameFromURL(params.firstURL);
-    if (this.initialDomainName == null)
+    if (this.initialDomainName == null) {
       throw new Error("No initial domain name");
+    }
+    const initialDomain = await this.findDomain(this.initialDomainName, null);
+    if (!initialDomain) {
+      throw new Error("Can't find domain");
+    }
     this.running = true;
     this.testedURLs = [params.firstURL];
     const siteAuditModel = new SiteAuditModel({
@@ -129,11 +134,10 @@ export default class Audit {
       this.running = false;
       throw error;
     }
-    const initialDomain = await this.findDomain(this.initialDomainName, null);
+
     this.pagesToCheck = [
       this.newPage(null, initialDomain, params.firstURL, null)
     ];
-    initialDomain.pageCount++;
     this.nextURL();
     return this.siteAuditDbObject;
   }
@@ -172,11 +176,11 @@ export default class Audit {
       pageLoad: pageLoadTimeout,
     });
     let tags;
-    if (this.params.standard == 'wcag2a')
+    if (this.params.standard === 'wcag2a')
       tags = ['wcag2a'];
-    else if (this.params.standard == 'wcag21aa')
+    else if (this.params.standard === 'wcag21aa')
       tags = ['wcag21aa', 'wcag2a'];
-    else if (this.params.standard == 'section508')
+    else if (this.params.standard === 'section508')
       tags = ['section508'];
     else
       tags = ['wcag2aa', 'wcag2a'];
@@ -203,7 +207,7 @@ export default class Audit {
   newPage(originPage, domain, url, status) {
     console.log("newPage url="+url);
     const depth = (originPage == null ? 0 : originPage.depth + 1);
-    return new Page(this, domain, url, depth, status);
+    return new Page(this, domain, url, status);
   }
   
   /**
@@ -236,95 +240,25 @@ export default class Audit {
   continueAudit(page) {
     console.log("continueAudit");
     // update domain and audit stats
-    const domainObject = page.domain.dbObject;
-    domainObject.nbCheckedURLs++;
     for (const violation of page.violations) {
       this.nbViolations += violation.nodes.length;
-      this.updateStats('domain', domainObject, page, violation);
-      this.updateStats('audit', this.siteAuditDbObject, page, violation);
     }
     this.checkedURLs.push(page.url);
     this.siteAuditDbObject.nbCheckedURLs = this.checkedURLs.length;
     if (page.errorMessage != null)
       this.siteAuditDbObject.nbScanErrors++;
-    domainObject.save()
-      .catch((err) => {
-        console.log("Error saving the domain:");
-        console.log(err);
-      })
-      .then(() => this.siteAuditDbObject.save())
+    this.siteAuditDbObject.save()
       .catch((err) => {
         console.log("Error saving the audit:");
         console.log(err);
       })
-      .finally(() => {
+      .then(() => {
         // continue or end audit
         if (!this.stopRequested)
           this.nextURL();
         else
           this.endAudit();
       });
-  }
-  
-  /**
-   * Update the stats for the audit or the domain.
-   * @param {string} objectType - audit|domain
-   * @param {Object} object - database object for the audit or domain
-   * @param {Page} page - the page that was just checked
-   * @param {Object} violation - the violation to add to stats
-   */
-  updateStats(objectType, object, page, violation) {
-    const violationCount = violation.nodes.length;
-    let subs, subObj;
-    if (objectType === 'domain') {
-      subs = 'pages';
-      subObj = page.dbObject;
-    } else if (objectType === 'audit') {
-      subs = 'domains';
-      subObj = page.domain.dbObject;
-    }
-    object.nbViolations += violationCount;
-    let vs = object.violationStats.get(violation.id);
-    if (vs == null) {
-      vs = {
-        description: violation.description,
-        descLink: violation.descLink,
-        impact: violation.impact,
-        total: violationCount,
-      };
-      vs[subs] = subObj ? [{
-        id: subObj._id,
-        count: violationCount,
-      }] : [];
-      object.violationStats.set(violation.id, vs);
-    } else {
-      vs.total += violationCount;
-      if (subObj != null) {
-        let found = false;
-        for (const p of vs[subs]) {
-          if (p.id == subObj._id) {
-            p.count += violationCount;
-            found = true;
-            break;
-          }
-        }
-        if (!found) {
-          vs[subs].push({
-            id: subObj._id,
-            count: violationCount,
-          });
-        }
-      }
-    }
-    // update category stats
-    if (violation.category != null) {
-      let catCount = object.categories.get(violation.category);
-      if (catCount == null)
-        catCount = violationCount;
-      else
-        catCount += violationCount;
-      object.categories.set(violation.category, catCount);
-    }
   }
   
   /**
@@ -463,15 +397,12 @@ export default class Audit {
       console.log("Domain not found for " + url);
       return;
     }
-    if (!this.params.checkSubdomains) {
-      if (domainName !== this.initialDomainName)
-        return;
-    } else {
-      if (domainName.indexOf(this.initialDomainName) === -1 ||
-          domainName.indexOf(this.initialDomainName) !==
-          domainName.length - this.initialDomainName.length)
-        return;
-    }
+    if (domainName !== this.initialDomainName)
+      return;
+    if (domainName.indexOf(this.initialDomainName) === -1 ||
+        domainName.indexOf(this.initialDomainName) !==
+        domainName.length - this.initialDomainName.length)
+      return;
     // check the MIME type and status before adding
     this.headToDo.push({originPage, url, domainName});
     if (!this.headTestsRunning && this.running && !this.stopRequested)
@@ -484,7 +415,7 @@ export default class Audit {
    * The MIME type should be text/html.
    */
   nextHEAD() {
-    if (this.headToDo.length == 0) {
+    if (this.headToDo.length === 0) {
       this.headTestsRunning = false;
       return;
     }
@@ -492,7 +423,7 @@ export default class Audit {
     const {originPage, url, domainName} = this.headToDo.shift();
     // avoid doing a HEAD request for a domain when it has already
     // reached the maximum number of pages to check
-    const domain = this.domains.find(d => d.name == domainName);
+    const domain = this.domains.find(d => d.name === domainName);
     if (domain != null && this.params.maxPagesPerDomain > 0 &&
         domain.pageCount >= this.params.maxPagesPerDomain) {
       setTimeout(() => this.nextHEAD(), 0);
@@ -514,7 +445,7 @@ export default class Audit {
             // NOTE: if we don't follow redirects, we don't have a way
             // to get the redirected URL
             // see: https://github.com/whatwg/fetch/issues/763
-            if (res.url != url)
+            if (res.url !== url)
               this.testToAddPage(originPage, res.url);
             else
               console.log("redirected to the same URL ?!? " + url);

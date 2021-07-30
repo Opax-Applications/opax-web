@@ -11,7 +11,7 @@ import {
   domainAuditCreateAllowed
 } from '../core/permissions';
 import Audit from '../core/audit';
-import AuditModel from '../models/audit.model';
+import SiteAuditModel from '../models/siteAudit.model';
 import DomainModel from '../models/domain.model';
 import PageModel from '../models/page.model';
 import GroupModel from '../models/group.model';
@@ -31,7 +31,7 @@ const cleanupRunningAudits = () => {
 
 exports.get_audits = async (req, res) => {
   try {
-    let audits = await AuditModel.find()
+    let audits = await SiteAuditModel.find()
       .select('initialDomainName dateStarted nbCheckedURLs nbViolations')
       .collation({locale:'en', strength: 2})
       .sort({dateStarted: -1})
@@ -51,7 +51,7 @@ exports.get_audit = async (req, res) => {
     return;
   }
   try {
-    const audit = await AuditModel.findById(auditId).populate({
+    const audit = await SiteAuditModel.findById(auditId).populate({
       path: 'domains',
       select: 'name nbCheckedURLs nbViolations',
       options: { sort: { name: 1 } },
@@ -88,7 +88,7 @@ exports.start = async (req, res) => {
     return;
   }
   if (typeof(standard) != 'string' ||
-      ['wcag2a', 'wcag2aa', 'wcag21aa', 'section508'].indexOf(standard) == -1) {
+      ['wcag2a', 'wcag2aa', 'wcag21aa', 'section508'].indexOf(standard) === -1) {
     res.json({ success: false, error: "Missing or wrong parameter: standard" });
     return;
   }
@@ -112,7 +112,7 @@ exports.start = async (req, res) => {
     res.json({ success: false, error: "Missing or wrong parameter: includeMatch" });
     return;
   }
-  if (includeMatch != '') {
+  if (includeMatch !== '') {
     try {
       new RegExp(includeMatch);
     } catch (e) {
@@ -132,7 +132,7 @@ exports.start = async (req, res) => {
   const newAudit = new Audit();
   runningAudits.push(newAudit);
   try {
-    const audit = await newAudit.start({ firstURL, standard, checkSubdomains,
+    const audit = await newAudit.startSiteAudit({ firstURL, standard, checkSubdomains,
       maxDepth, maxPagesPerDomain, sitemaps, includeMatch, browser, postLoadingDelay });
     res.json({ success: true, data: audit });
   } catch (err) {
@@ -226,7 +226,7 @@ exports.remove_audit = async (req, res) => {
     res.json({ success: false, error: "Can't remove a running audit." });
     return;
   }
-  const audit = await AuditModel.findById(auditId);
+  const audit = await SiteAuditModel.findById(auditId);
   if (!domainDeleteAllowed(req.user, audit.initialDomainName)) {
     res.json({ success: false, error: "No permission to remove this audit." });
     return;
@@ -234,7 +234,7 @@ exports.remove_audit = async (req, res) => {
   try {
     await PageModel.deleteMany({auditId: auditId});
     await DomainModel.deleteMany({auditId: auditId});
-    await AuditModel.deleteOne({ _id: auditId });
+    await SiteAuditModel.deleteOne({ _id: auditId });
     res.json({ success: true, data: {} });
   } catch (err) {
     res.json({ success: false, error: err.message });
@@ -267,7 +267,7 @@ exports.export_audit = async (req, res) => {
     return;
   }
   try {
-    const audit = await AuditModel.findById(auditId).select('-_id').lean().exec();
+    const audit = await SiteAuditModel.findById(auditId).select('-_id').lean().exec();
     if (audit == null) {
       res.json({ success: false, error: "Audit not found !" });
       return;
@@ -330,7 +330,7 @@ exports.import_audit = async (req, res) => {
       res.json({ success: false, error: "You are not allowed to import this audit." });
       return;
     }
-    const savedAudit = await AuditModel.create(audit);
+    const savedAudit = await SiteAuditModel.create(audit);
     const auditId = savedAudit._id;
     // save domains with new audit id
     for (const domain of domains)
