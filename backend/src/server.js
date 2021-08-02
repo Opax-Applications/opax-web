@@ -18,14 +18,15 @@ import pageRoute from './routes/page.route';
 import userRoute from './routes/user.route';
 import groupRoute from './routes/group.route';
 import { initPassport, createGuestGroup, createSuperuserGroup } from './core/permissions';
+import Domain from './models/domain.model';
 
 if (!process.env.ADMIN_PASSWORD)
   console.log('WARNING: You need to define a password in .env and recreate the containers with "docker-compose down" and "docker-compose up -d".');
 
 // Web server setup
 const app = express();
-const PORT = process.env.NODE_ENV == 'production' ? 8080 :
-  process.env.NODE_ENV == 'test' ? 3144 : 3143;
+const PORT = process.env.NODE_ENV === 'production' ? 8080 :
+  process.env.NODE_ENV === 'test' ? 3144 : 3143;
 
 app.use(compression());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -86,9 +87,9 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // create basic groups and the admin user if they don't exist
 const dbReady = async () => {
   await mongooseConnectPromise;
-  await Promise.all([createGuestGroup(), createSuperuserGroup()]);
+  await Promise.all([createGuestGroup(), createSuperuserGroup(), Domain.createDomains()]);
 };
-if (process.env.NODE_ENV != 'test')
+if (process.env.NODE_ENV !== 'test')
   dbReady();
 
 export { app, server, dbReady };

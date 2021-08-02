@@ -20,7 +20,7 @@ const groupSchema = new Schema({
     deleteAllAudits: Boolean,
     editUsersAndGroups: Boolean,
     domains: [{
-      name: String,
+      domainId: {type: Schema.Types.ObjectId, ref: 'Domain', index: true},
       standard: String,
       postLoadingDelay: Number,
       read: Boolean,
@@ -69,7 +69,7 @@ groupSchema.statics.findById = async function(id) {
     { $lookup: userLookup },
     { $project: { name: 1, apiKey: 1, permissions: 1, users: 1 } },
   ]).exec();
-  if (groups.length == 1)
+  if (groups.length === 1)
     return groups[0];
   return null;
 };
@@ -82,14 +82,14 @@ groupSchema.statics.findByApiKey = async function(apiKey) {
     { $match: { apiKey: apiKey } },
     { $project: { name: 1, apiKey: 1, permissions: 1} },
   ]).exec();
-  if (groups.length == 1)
+  if (groups.length === 1)
     return groups[0];
 
   return null;
 };
 
 groupSchema.statics.createGuestGroup = async function() {
-  const gg = await this.create({
+  const guestGroup = await this.create({
     name: 'Guests',
     permissions: {
       createAllAudits: false,
@@ -99,7 +99,7 @@ groupSchema.statics.createGuestGroup = async function() {
       domains: [],
     }
   });
-  return gg;
+  return guestGroup;
 };
 
 // NOTE: we can't use an arrow function here because we will need "this"
@@ -148,7 +148,7 @@ groupSchema.statics.getSuperuserGroup = async function() {
     { $match: { name: 'Superusers' } },
     { $lookup: userLookup },
   ]).exec();
-  if (groups.length == 1)
+  if (groups.length === 1)
     return groups[0];
   return null;
 };

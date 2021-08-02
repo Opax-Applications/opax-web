@@ -7,11 +7,20 @@ const DomainsSchema = new Schema({
     type: String,
     index: true,
     unique: true,
-  },
-  groupId: {type: Schema.Types.ObjectId, ref: 'Group', index: true}
+  }
 }, {timestamps: true});
 
 DomainsSchema.set('toObject', {virtuals: true});
 DomainsSchema.set('toJSON', {virtuals: true});
+
+DomainsSchema.statics.createDomains = async function() {
+    const telstra = await this.create({
+        name: 'www.telstra.com.au'
+    });
+
+    const agl = await this.create({
+        name: 'www.agl.com.au'
+    });
+};
 
 export default mongoose.model('Domain', DomainsSchema);

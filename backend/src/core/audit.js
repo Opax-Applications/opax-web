@@ -8,7 +8,6 @@ import AbortController from 'abort-controller';
 
 import Page from './page';
 import Domain from './domain';
-import AuditModel from '../models/audit.model';
 import SiteAuditModel from '../models/siteAudit.model';
 
 
@@ -158,7 +157,7 @@ export default class Audit {
     }
     this.driver = new WebDriver.Builder()
       .forBrowser(this.params.browser);
-    if (this.params.browser == 'firefox') {
+    if (this.params.browser === 'firefox') {
       this.driver = this.driver.withCapabilities(
         WebDriver.Capabilities.firefox().set('acceptInsecureCerts', true));
       const profile = new firefox.Profile();
@@ -440,7 +439,7 @@ export default class Audit {
     })
       .then((res) => {
         const mime = res.headers.get('content-type');
-        if (mime != null && mime.indexOf('text/html') == 0) {
+        if (mime != null && mime.indexOf('text/html') === 0) {
           if (res.redirected) {
             // NOTE: if we don't follow redirects, we don't have a way
             // to get the redirected URL
@@ -484,18 +483,18 @@ export default class Audit {
    */
   continueWithHead(originPage, url, domainName, res, sslError) {
     // ignore bad looking URLs that result in a 404 (probably a bad link)
-    if (res != null && res.status == 404 && url.match(/.https?:\/\/|\s/)) {
+    if (res != null && res.status === 404 && url.match(/.https?:\/\/|\s/)) {
       console.log("Ignored " + url + " (probably a bad link)");
       return;
     }
     // ignore pages with 401/407 status (we don't have a way to authenticate)
     // see https://github.com/w3c/webdriver/issues/385
-    if (res != null && (res.status == 401 || res.status == 407)) {
+    if (res != null && (res.status === 401 || res.status === 407)) {
       console.log("Ignored " + url + " because of status code " + res.status);
       return;
     }
     this.findDomain(domainName, originPage).then((domain) => {
-      if (domain && (this.params.maxPagesPerDomain == 0 ||
+      if (domain && (this.params.maxPagesPerDomain === 0 ||
           domain.pageCount < this.params.maxPagesPerDomain)) {
         const page = this.newPage(originPage, domain, url,
           sslError ? null : res.status);

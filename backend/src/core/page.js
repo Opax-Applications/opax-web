@@ -134,7 +134,7 @@ export default class Page {
   }
 
   /**
-   * Save the page in the database and call audit.continueAudit().
+   * Save the page in the database
    */
   save() {
     const page = new PageModel({

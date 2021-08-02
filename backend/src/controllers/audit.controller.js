@@ -120,7 +120,7 @@ exports.start = async (req, res) => {
       return;
     }
   }
-  if (typeof(browser) != 'string' || ['firefox', 'chrome'].indexOf(browser) == -1) {
+  if (typeof(browser) != 'string' || ['firefox', 'chrome'].indexOf(browser) === -1) {
     res.json({ success: false, error: "Missing or wrong parameter: browser" });
     return;
   }
