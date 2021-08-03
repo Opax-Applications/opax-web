@@ -10,19 +10,23 @@ export default class Page {
    * @param {string} url
    * @param {Number} status - status returned by the HEAD request
    */
-  constructor(audit, domain, url, status) {
+  constructor(audit, domain, url, status, params, depth) {
     /** @member {Audit} */
     this.audit = audit;
     /** @member {Domain} */
     this.domain = domain;
     /** @member {string} */
     this.url = url;
+    /** @member {number} */
+    this.depth = depth;
     /** @member {Number} */
     this.status = status;
     /** @member {string} */
     this.errorMessage = null;
     /** @member {PageModel} - database object for this page */
     this.dbObject = null;
+    this.params = params;
+    this.violations = [];
   }
 
   /**
@@ -50,7 +54,7 @@ export default class Page {
     this.audit.extractLinks(this)
         .then(() => {
           console.log("aXe analyze");
-          this.audit.aXeB.run((err, results) => {
+          this.audit.aXeB.analyze((err, results) => {
             if (err) {
               console.log("aXe analyze error for " + this.url + ":");
               console.log(err);
@@ -102,8 +106,9 @@ export default class Page {
           nbViolations += nodes.length;
         }
       }
+      this.violations = violations;
       const pageAudit = new PageAudit({
-        ...params,
+        ...this.params,
         pageId: this.dbObject._id,
         errorMessage: this.errorMessage,
         dateEnded: new Date(),
@@ -114,6 +119,8 @@ export default class Page {
       return pageAudit.save();
     }).then(() => {
       this.audit.continueAudit(this);
+    }).catch((err)=>{
+      console.log(err);
     });
   }
 
@@ -138,7 +145,7 @@ export default class Page {
    */
   save() {
     const page = new PageModel({
-      domainId: this.domain.dbObject._id,
+      domainId: this.domain._id,
       url: this.url,
       status: this.status,
       errorMessage: this.errorMessage

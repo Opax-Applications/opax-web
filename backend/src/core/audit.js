@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 import AbortController from 'abort-controller';
 
 import Page from './page';
-import Domain from './domain';
+import Domain from '../models/domain.model';
 import SiteAuditModel from '../models/siteAudit.model';
 
 
@@ -46,6 +46,8 @@ export default class Audit {
     this.headToDo = [];
     /** @member {Array.<Page>} - pages that will be analyzed with aXe */
     this.pagesToCheck = [];
+    this.urlsToCheck = new Set();
+
     /** @member {Array.<string>} - URLs that have been analyzed with aXe */
     this.checkedURLs = [];
     /** @member {AuditModel} - database object for this audit */
@@ -79,6 +81,7 @@ export default class Audit {
     };
     /** @member {Object} - form parameters */
     this.params = {};
+    this.pagesCount = 0;
   }
   
   /**
@@ -206,7 +209,17 @@ export default class Audit {
   newPage(originPage, domain, url, status) {
     console.log("newPage url="+url);
     const depth = (originPage == null ? 0 : originPage.depth + 1);
-    return new Page(this, domain, url, status);
+    this.pagesCount++;
+    console.log("before");
+    console.log(this.urlsToCheck);
+    if (url.endsWith("/")) {
+      this.urlsToCheck.add(url.slice(0, url.length - 1));
+    } else {
+      this.urlsToCheck.add(url);
+    }
+    console.log("after");
+    console.log(this.urlsToCheck);
+    return new Page(this, domain, url, status, this.params, depth);
   }
   
   /**
@@ -221,6 +234,7 @@ export default class Audit {
    * Continue the audit with the new URL to check.
    */
   nextURL() {
+    console.log("Next url");
     if (this.pagesToCheck.length > 0 && !this.stopRequested) {
       const page = this.pagesToCheck.shift();
       page.startChecking();
@@ -315,31 +329,14 @@ export default class Audit {
    * @returns {Promise<Domain>}
    */
   async findDomain(domainName, originPage) {
+    if (this.domains.length === 0) {
+      console.log('empty domain')
+      this.domains = await Domain.find();
+    }
     for (const domain of this.domains)
       if (domain.name === domainName)
         return domain;
     return null;
-    // const domain = new Domain(this, domainName);
-    // this.domains.push(domain);
-    // await domain.saveNew();
-    // if (this.params.sitemaps) {
-    //   await domain.readSitemap()
-    //     .then((sitemap) => {
-    //       if (!sitemap.urlset)
-    //         return;
-    //       const sitemapPage = this.newPage(originPage, domain, domain.sitemapURL(), 200);
-    //       for (const url of sitemap.urlset.url) {
-    //         if (!url.loc || !url.loc.length)
-    //           continue;
-    //         this.testToAddPage(sitemapPage, url.loc[0]);
-    //       }
-    //     })
-    //     .catch(err => {
-    //       console.log("Error reading the site map:");
-    //       console.log(err);
-    //     });
-    // }
-    // return domain;
   }
   
   /**
@@ -350,7 +347,8 @@ export default class Audit {
    */
   extractLinks(page) {
     console.log("audit extractLinks");
-    if (page.depth >= this.params.maxDepth)
+    if (page.depth >= this.params.maxDepth || (this.params.maxPagesPerDomain > 0 &&
+        this.pagesCount >= this.params.maxPagesPerDomain))
       return Promise.resolve();
     return this.driver.executeScript(`
       let as = document.getElementsByTagName('a');
@@ -360,7 +358,7 @@ export default class Audit {
     `)
       .then(hrefs => {
         for (const href of hrefs) {
-          if (href != null && href != '')
+          if (href != null && href !== '')
             this.testToAddPage(page, href);
         }
       })
@@ -396,16 +394,20 @@ export default class Audit {
       console.log("Domain not found for " + url);
       return;
     }
-    if (domainName !== this.initialDomainName)
+    if (domainName !== this.initialDomainName) {
+      console.log("domain name not equal to initial one, domainName: " + domainName + " , initialDomainName: " + this.initialDomainName);
       return;
+    }
     if (domainName.indexOf(this.initialDomainName) === -1 ||
         domainName.indexOf(this.initialDomainName) !==
-        domainName.length - this.initialDomainName.length)
+        domainName.length - this.initialDomainName.length) {
       return;
+    }
     // check the MIME type and status before adding
     this.headToDo.push({originPage, url, domainName});
-    if (!this.headTestsRunning && this.running && !this.stopRequested)
+    if (!this.headTestsRunning && this.running && !this.stopRequested) {
       this.nextHEAD();
+    }
   }
 
   /**
@@ -424,7 +426,7 @@ export default class Audit {
     // reached the maximum number of pages to check
     const domain = this.domains.find(d => d.name === domainName);
     if (domain != null && this.params.maxPagesPerDomain > 0 &&
-        domain.pageCount >= this.params.maxPagesPerDomain) {
+        this.pagesCount >= this.params.maxPagesPerDomain) {
       setTimeout(() => this.nextHEAD(), 0);
       return;
     }
@@ -482,6 +484,7 @@ export default class Audit {
    * @param {boolean} sslError
    */
   continueWithHead(originPage, url, domainName, res, sslError) {
+    console.log("Continue with head");
     // ignore bad looking URLs that result in a 404 (probably a bad link)
     if (res != null && res.status === 404 && url.match(/.https?:\/\/|\s/)) {
       console.log("Ignored " + url + " (probably a bad link)");
@@ -494,14 +497,15 @@ export default class Audit {
       return;
     }
     this.findDomain(domainName, originPage).then((domain) => {
-      if (domain && (this.params.maxPagesPerDomain === 0 ||
-          domain.pageCount < this.params.maxPagesPerDomain)) {
+      const urlToCheck = url.endsWith("/") ? url.slice(0, url.length - 1) : url;
+      if (domain && !this.urlsToCheck.has(urlToCheck) && (this.params.maxPagesPerDomain === 0 ||
+          this.pagesCount < this.params.maxPagesPerDomain)) {
+        console.log("inside if");
         const page = this.newPage(originPage, domain, url,
           sslError ? null : res.status);
         if (sslError)
           page.errorMessage = "Insecure version of SSL !";
         this.pagesToCheck.push(page);
-        domain.pageCount++;
       }
     });
   }
