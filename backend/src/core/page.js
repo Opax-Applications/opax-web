@@ -144,12 +144,24 @@ export default class Page {
    * Save the page in the database
    */
   save() {
-    const page = new PageModel({
-      domainId: this.domain._id,
-      url: this.url,
-      status: this.status,
-      errorMessage: this.errorMessage
+    return PageModel.find({url: this.url}).then((page)=>{
+      if (page.length !== 0) {
+        console.log("inside if")
+        console.log(page);
+        return Promise.resolve(page[0]);
+      } else {
+        console.log("inside else")
+
+        const page = new PageModel({
+          domainId: this.domain._id,
+          url: this.url,
+          status: this.status,
+          errorMessage: this.errorMessage
+        });
+        return page.save();
+      }
+    }).then((pageObject) => {
+      this.dbObject = pageObject
     });
-    return page.save().then((pageObject) => this.dbObject = pageObject);
   }
 }

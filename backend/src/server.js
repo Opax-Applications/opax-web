@@ -52,7 +52,7 @@ app.use('/api/groups', groupRoute);
 
 // in prod, send non-matched requests to React
 // (React's proxy only works in dev)
-if (process.env.NODE_ENV == 'production') {
+if (process.env.NODE_ENV === 'production') {
   app.use(express.static(path.resolve(__dirname + '/../../client/build')));
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname + '/../../client/build/index.html'));
@@ -63,7 +63,7 @@ if (process.env.NODE_ENV == 'production') {
 const sslKeyPath = '/app/certs/server.key';
 const sslCertPath = '/app/certs/server.crt';
 let server;
-if (process.env.NODE_ENV == 'production' &&
+if (process.env.NODE_ENV === 'production' &&
     fs.existsSync(sslKeyPath) && fs.existsSync(sslCertPath)) {
   const sslKey = fs.readFileSync(sslKeyPath, 'utf8');
   const sslCert = fs.readFileSync(sslCertPath, 'utf8');

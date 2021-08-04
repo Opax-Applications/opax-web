@@ -12,6 +12,8 @@ import {
 } from '../core/permissions';
 import Audit from '../core/audit';
 import SiteAuditModel from '../models/siteAudit.model';
+import PageAuditSchema from '../models/pageAudit.model';
+
 import DomainModel from '../models/domain.model';
 import PageModel from '../models/page.model';
 import GroupModel from '../models/group.model';
@@ -39,6 +41,16 @@ exports.get_audits = async (req, res) => {
       .exec();
     audits = await filterAudits(req.user, audits);
     res.json({ success: true, data: audits });
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+};
+
+exports.get_page_audits = async (req, res) => {
+  try {
+    let pageAudits = await PageAuditSchema.find();
+    // pageAudits = await filterAudits(req.user, pageAudits);
+    res.json({ success: true, data: pageAudits });
   } catch (err) {
     res.json({ success: false, error: err.message });
   }

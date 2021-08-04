@@ -1,5 +1,7 @@
 import { domainReadAllowed } from '../core/permissions';
 import PageModel from '../models/page.model';
+import PageAuditSchema from "../models/pageAudit.model";
+
 import Audit from '../core/audit';
 
 exports.get_page = async (req, res) => {
@@ -20,6 +22,35 @@ exports.get_page = async (req, res) => {
       return;
     }
     res.json({ success: true, data: page });
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+};
+
+exports.get_pages = async (req, res) => {
+  try {
+    const page = await PageModel.find();
+    if (page == null) {
+      res.json({ success: false, error: "Page not found !" });
+      return;
+    }
+
+    res.json({ success: true, data: page });
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+};
+
+exports.get_page_audits = async (req, res) => {
+  try {
+    const { pageId } = req.params;
+    const pageAudits = await PageAuditSchema.find({pageId: pageId});
+    if (pageAudits == null) {
+      res.json({ success: false, error: "No audits found !" });
+      return;
+    }
+
+    res.json({ success: true, data: pageAudits });
   } catch (err) {
     res.json({ success: false, error: err.message });
   }

@@ -500,7 +500,6 @@ export default class Audit {
       const urlToCheck = url.endsWith("/") ? url.slice(0, url.length - 1) : url;
       if (domain && !this.urlsToCheck.has(urlToCheck) && (this.params.maxPagesPerDomain === 0 ||
           this.pagesCount < this.params.maxPagesPerDomain)) {
-        console.log("inside if");
         const page = this.newPage(originPage, domain, url,
           sslError ? null : res.status);
         if (sslError)

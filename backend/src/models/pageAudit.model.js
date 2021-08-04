@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const PageAuditSchema = new Schema({
-    pageId: {type: Schema.Types.ObjectId, ref: 'Page', index: true},
+    pageId: {type: Schema.Types.ObjectId, ref: 'Page', index: true, required: true},
     standard: String,
     browser: String,
     postLoadingDelay: Number,
