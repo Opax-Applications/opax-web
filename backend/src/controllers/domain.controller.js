@@ -28,6 +28,20 @@ exports.get_domain = async (req, res) => {
   }
 };
 
+exports.create_domain = async (req, res) => {
+  const { domainName } = req.body();
+  if (typeof(domainName) != 'string') {
+    res.json({ success: false, error: "Incorrect domain name" });
+    return;
+  }
+  try {
+    const domain = await new DomainModel({name: domainName}).save();
+    res.json({ success: true, data: domain });
+  } catch (err) {
+    res.json({ success: false, error: err.message });
+  }
+};
+
 exports.get_domains = async (req, res) => {
   try {
     const domains = await DomainModel.find();
