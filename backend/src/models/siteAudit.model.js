@@ -25,7 +25,7 @@ const SiteAuditSchema = new Schema({
             impact: String,
             total: Number,
             domains: [{
-                id: { type: Schema.Types.ObjectId, ref: 'Domain' },
+                id: { type: Schema.Types.ObjectId, ref: 'Site' },
                 count: Number,
             }],
         },
@@ -39,8 +39,8 @@ const SiteAuditSchema = new Schema({
     complete: Boolean,
 }, { timestamps: true });
 
-SiteAuditSchema.virtual('domains', {
-    ref: 'Domain',
+SiteAuditSchema.virtual('Site', {
+    ref: 'Site',
     localField: '_id',
     foreignField: 'auditId'
 });

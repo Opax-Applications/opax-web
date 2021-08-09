@@ -1,7 +1,7 @@
 import fetch from 'node-fetch';
 import { parseString } from 'xml2js';
 
-import DomainModel from '../models/domain.model';
+import DomainModel from '../models/site.model';
 
 
 export default class Domain {

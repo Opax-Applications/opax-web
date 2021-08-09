@@ -7,7 +7,7 @@ import fetch from 'node-fetch';
 import AbortController from 'abort-controller';
 
 import Page from './page';
-import Domain from '../models/domain.model';
+import Site from '../models/site.model';
 import SiteAuditModel from '../models/siteAudit.model';
 
 
@@ -331,10 +331,10 @@ export default class Audit {
   async findDomain(domainName, originPage) {
     if (this.domains.length === 0) {
       console.log('empty domain')
-      this.domains = await Domain.find();
+      this.domains = await Site.find();
     }
     for (const domain of this.domains)
-      if (domain.name === domainName)
+      if (domain.url === domainName)
         return domain;
     return null;
   }

@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const PagesSchema = new Schema({
-    domainId: {type: Schema.Types.ObjectId, ref: 'Domain', index: true, required: true},
+    siteId: {type: Schema.Types.ObjectId, ref: 'Site', index: true, required: true},
     url: {
         type: String,
         index: true,
@@ -11,5 +11,14 @@ const PagesSchema = new Schema({
     },
     status: String
 }, {timestamps: true});
+
+PagesSchema.virtual('audits', {
+    ref: 'PageAudit',
+    localField: '_id',
+    foreignField: '_pageId'
+})
+
+PagesSchema.set('toObject', { virtuals: true });
+PagesSchema.set('toJSON', { virtuals: true });
 
 export default mongoose.model('Page', PagesSchema);

@@ -13,12 +13,12 @@ import passport from 'passport';
 
 import appRoute from './routes/app.route';
 import auditRoute from './routes/audit.route';
-import domainRoute from './routes/domain.route';
+import siteRoute from './routes/site.route';
 import pageRoute from './routes/page.route';
 import userRoute from './routes/user.route';
 import groupRoute from './routes/group.route';
 import { initPassport, createGuestGroup, createSuperuserGroup } from './core/permissions';
-import Domain from './models/domain.model';
+import Site from './models/site.model';
 
 if (!process.env.ADMIN_PASSWORD)
   console.log('WARNING: You need to define a password in .env and recreate the containers with "docker-compose down" and "docker-compose up -d".');
@@ -45,7 +45,7 @@ initPassport();
 
 app.use('/api/app', appRoute);
 app.use('/api/audits', auditRoute);
-app.use('/api/domains', domainRoute);
+app.use('/api/sites', siteRoute);
 app.use('/api/pages', pageRoute);
 app.use('/api/users', userRoute);
 app.use('/api/groups', groupRoute);
@@ -87,7 +87,7 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 // create basic groups and the admin user if they don't exist
 const dbReady = async () => {
   await mongooseConnectPromise;
-  await Promise.all([createGuestGroup(), createSuperuserGroup(), Domain.createDomains()]);
+  await Promise.all([createGuestGroup(), createSuperuserGroup(), Site.createSites()]);
 };
 if (process.env.NODE_ENV !== 'test')
   dbReady();

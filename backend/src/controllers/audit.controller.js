@@ -14,7 +14,7 @@ import Audit from '../core/audit';
 import SiteAuditModel from '../models/siteAudit.model';
 import PageAuditSchema from '../models/pageAudit.model';
 
-import DomainModel from '../models/domain.model';
+import DomainModel from '../models/site.model';
 import PageModel from '../models/page.model';
 import GroupModel from '../models/group.model';
 

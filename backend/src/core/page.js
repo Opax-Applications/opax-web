@@ -110,6 +110,7 @@ export default class Page {
       const pageAudit = new PageAudit({
         ...this.params,
         pageId: this.dbObject._id,
+        siteId: this.dbObject.siteId,
         errorMessage: this.errorMessage,
         dateEnded: new Date(),
         nbViolations: nbViolations,
@@ -153,7 +154,7 @@ export default class Page {
         console.log("inside else")
 
         const page = new PageModel({
-          domainId: this.domain._id,
+          siteId: this.domain._id,
           url: this.url,
           status: this.status,
           errorMessage: this.errorMessage

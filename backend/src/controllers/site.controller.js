@@ -1,5 +1,5 @@
 import { domainReadAllowed } from '../core/permissions';
-import DomainModel from '../models/domain.model';
+import SiteModel from '../models/site.model';
 import PageModel from '../models/page.model';
 
 exports.get_domain = async (req, res) => {
@@ -9,7 +9,7 @@ exports.get_domain = async (req, res) => {
     return;
   }
   try {
-    const domain = await DomainModel.findById(domainId).populate({
+    const domain = await SiteModel.findById(domainId).populate({
       path: 'pages',
       select: '-violations',
       options: { sort: { nbViolations: -1, url: 1 } },
@@ -35,7 +35,7 @@ exports.create_domain = async (req, res) => {
     return;
   }
   try {
-    const domain = await new DomainModel({name: domainName}).save();
+    const domain = await new SiteModel({name: domainName}).save();
     res.json({ success: true, data: domain });
   } catch (err) {
     res.json({ success: false, error: err.message });
@@ -44,7 +44,7 @@ exports.create_domain = async (req, res) => {
 
 exports.get_domains = async (req, res) => {
   try {
-    const domains = await DomainModel.find();
+    const domains = await SiteModel.find().populate('numberOfPages').populate('numberOfDefects');
     if (domains == null) {
       res.json({ success: false, error: "Domain not found !" });
       return;
@@ -58,7 +58,7 @@ exports.get_domains = async (req, res) => {
 exports.get_domain_pages = async (req, res) => {
   const { domainId } = req.params;
   try {
-    const domains = await PageModel.find({domainId: domainId});
+    const domains = await PageModel.find({siteId: domainId});
     if (domains == null) {
       res.json({ success: false, error: "Domain not found !" });
       return;

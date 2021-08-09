@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const PageAuditSchema = new Schema({
     pageId: {type: Schema.Types.ObjectId, ref: 'Page', index: true, required: true},
+    siteId: {type: Schema.Types.ObjectId, ref: 'Site', index: true, required: true},
     standard: String,
     browser: String,
     postLoadingDelay: Number,
@@ -22,8 +23,5 @@ const PageAuditSchema = new Schema({
     }],
     complete: Boolean,
 }, { timestamps: true });
-
-PageAuditSchema.set('toObject', { virtuals: true });
-PageAuditSchema.set('toJSON', { virtuals: true });
 
 export default mongoose.model('PageAudit', PageAuditSchema);
